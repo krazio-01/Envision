@@ -1,0 +1,161 @@
+.explorePage {
+  min-height: 700px;
+  padding-top: 100px;
+}
+
+.explorePage .resultNotFound {
+  font-size: 24px;
+  color: #fff;
+}
+
+.filterResults {
+  position: relative;
+  background-color: rgba(0, 0, 0, 0.4);
+  border-radius: 12px;
+  min-height: 700px;
+}
+
+.explorePage .pageHeader {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 25px;
+  flex-direction: column;
+}
+
+.explorePage .pageTitle {
+  font-size: 24px;
+  line-height: 34px;
+  color: white;
+  margin-bottom: 20px;
+}
+
+.explorePage .filters {
+  display: flex;
+  gap: 10px;
+  flex-direction: column;
+}
+
+/* react-select */
+.explorePage .filters .react-select-container.genresDD {
+  width: 100%;
+}
+
+.explorePage .filters .react-select-container.sortbyDD {
+  width: 100%;
+  flex-shrink: 0;
+}
+
+.explorePage .filters .react-select-container .react-select__control {
+  border: 0;
+  outline: 0;
+  box-shadow: none;
+  background-color: var(--black);
+  border-radius: 20px;
+}
+
+.explorePage
+  .filters
+  .react-select-container
+  .react-select__control
+  .react-select__single-value {
+  color: red;
+}
+
+.explorePage .filters .react-select-container .react-select__menu {
+  top: 40px;
+  margin: 0;
+  padding: 0;
+  background-color: var(--black);
+}
+
+.explorePage .filters .react-select-container .react-select__multi-value {
+  color: #fff;
+  background-color: var(--bg-color);
+}
+
+/* ---- */
+.explorePage
+  .filters
+  .react-select-container
+  .react-select__value-container
+  .react-select__control
+  input {
+  color: #fff;
+  border: 0;
+}
+/* --- */
+
+.explorePage
+  .filters
+  .react-select-container
+  .react-select__control
+  input:focus {
+  border-color: red;
+}
+
+.explorePage
+  .filters
+  .react-select-container
+  .react-select__multi-value__label {
+  color: #fff;
+}
+
+.explorePage
+  .filters
+  .react-select-container
+  .react-select__menu
+  .react-select__option {
+  color: #fff;
+  background: transparent;
+}
+
+.explorePage
+  .filters
+  .react-select-container
+  .react-select__menu
+  .react-select__option:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+  cursor: pointer;
+}
+
+.explorePage .content {
+  display: flex;
+  justify-content: center;
+  flex-flow: row wrap;
+  padding: 2rem 0;
+  gap: 1rem;
+  margin-bottom: 50px;
+}
+
+.explorePage .content .movieCard .posterBlock {
+  margin-bottom: 30px;
+}
+/* responsive */
+@media screen and (max-width: 1024px) {
+  .explorePage .content {
+    padding: 0.5rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .explorePage .filters .react-select-container.sortbyDD {
+    width: 250px;
+  }
+
+  .explorePage .filters .react-select-container.genresDD {
+    max-width: 500px;
+    min-width: 250px;
+  }
+
+  .explorePage .filters {
+    flex-direction: row;
+  }
+
+  .explorePage .pageTitle {
+    margin-bottom: 0;
+  }
+
+  .explorePage .pageHeader {
+    flex-direction: row;
+  }
+}

@@ -1,0 +1,21 @@
+.genres {
+    display: flex;
+    gap: 5px;
+}
+
+.genres .genre {
+    background-color: var(--red);
+    padding: 3px 4px;
+    font-size: 13px;
+    border-radius: 4px;
+    color: white;
+    white-space: nowrap;
+}
+
+@media screen and (max-width: 768px) {
+    .genres .genre {
+        font-size: 11px;
+        padding: 2px 3px;
+    }
+    
+}

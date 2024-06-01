@@ -1,0 +1,56 @@
+.movie-player.sk {
+  height: 600px;
+}
+
+.content .detailSection {
+  width: 100%;
+}
+
+.content .detailSection .media-image.skeleton {
+  min-height: 430px;
+}
+
+.detailsBanner .content .media-info .title.skeleton {
+  height: 35px;
+  width: 70%;
+  margin-bottom: 10px;
+  border-radius: 12px;
+}
+
+.detailsBanner .content .media-info .subtitle.skeleton {
+  height: 20px;
+  width: 50%;
+  margin-bottom: 10px;
+  border-radius: 12px;
+}
+
+.detailsBanner .content .media-info .genres.skeleton {
+  height: 20px;
+  width: 30%;
+  margin-bottom: 10px;
+  border-radius: 12px;
+}
+
+.detailsBanner .content .media-info .overview.skeleton {
+  height: 100px;
+  width: 100%;
+  margin-bottom: 10px;
+  border-radius: 12px;
+}
+
+.detailsBanner .content .media-info .info.skeleton {
+  height: 30px;
+  width: 100%;
+  margin-bottom: 10px;
+  border-radius: 12px;
+}
+
+@media screen and (max-width: 1399.98px) {
+  .movie-player.sk {
+    height: 35rem;
+  }
+
+  .config.sk {
+    min-height: 7rem;
+  }
+}
