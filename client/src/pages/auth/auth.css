@@ -1,0 +1,115 @@
+.auth-form-container {
+    display: flex;
+    flex-direction: column;
+    max-width: min(440px, 100%);
+    margin-inline: auto;
+    background-color: rgba(0, 0, 0, 0.6);
+    padding: 3rem;
+    border-radius: 10px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.auth-form-container form {
+    margin: 2rem 0;
+    flex: 1;
+}
+
+.auth-form-container form .input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    flex: 1;
+    margin-bottom: 2rem;
+}
+
+.auth-form-container form .input-group label {
+    color: var(--text-light);
+}
+
+.auth-form-container form .input-group input {
+    background: transparent;
+    border: none;
+    outline: none;
+    border-bottom: 1px solid #ccc;
+    color: #fff;
+    padding: 0.5rem 0;
+}
+
+.forgot-password {
+    margin-bottom: 1rem;
+}
+
+.forgot-password a {
+    text-decoration: none;
+    color: var(--text-light);
+}
+
+.forgot-password a:hover {
+    text-decoration: underline;
+}
+
+.auth-form-container form .auth-btn {
+    padding: 0.5rem 1rem;
+    border: none;
+    background: var(--red);
+    width: 100%;
+    color: #fff;
+    cursor: pointer;
+    font-size: 1rem;
+    border-radius: var(--border-rad);
+    transition: all 0.3s ease;
+}
+
+.auth-form-container form .auth-btn:hover {
+    background: var(--red-hover);
+}
+
+.auth-form-container form .auth-btn.loading {
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+.auth-form-footer p {
+    color: var(--text-light);
+    font-size: var(--fz-md);
+}
+
+.auth-form-footer a {
+    text-decoration: none;
+    color: #fff;
+    font-size: var(--fz-md);
+    transition: all 0.3s ease;
+}
+
+.auth-form-footer a:hover {
+    text-decoration: underline;
+}
+
+/* verify email css */
+.verify-email-main {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100svh;
+}
+
+.verify-email-main div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.verify-email-main a {
+    display: inline-block;
+    color: #fff;
+    text-decoration: none;
+    padding: 0.7rem 1rem;
+    border-radius: var(--border-rad);
+    transition: all 0.3s ease;
+}
+
+.verify-email-main a:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}

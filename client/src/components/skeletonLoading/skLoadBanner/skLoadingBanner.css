@@ -1,0 +1,40 @@
+.swiper-slide.sk {
+    cursor: default;
+}
+
+.swiper-slide.sk::after {
+    z-index: inherit;
+}
+
+.swiper-slide .skeleton {
+    width: 100%;
+    height: 100%;
+}
+
+.swiper-slide span div {
+    width: 100%;
+    height: 100%;
+}
+
+.name.sk {
+    height: 35px;
+    border-radius: 5px;
+}
+
+.meta.sk>span {
+    height: 20px;
+    width: 100%;
+    border-radius: 5px;
+}
+
+.desc.sk {
+    height: 70px;
+    border-radius: 5px;
+}
+
+.action.sk div {
+    padding: 1rem 3.5rem;
+    border-radius: var(--border-rad);
+    background: var(--skeleton);
+    cursor: default;
+}

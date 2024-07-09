@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Verify Your Account</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Roboto, sans-serif;
+        }
+
+        body {
+            padding: 20px;
+        }
+
+        .container {
+            padding: 1rem;
+            max-width: 700px;
+            border-radius: 12px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .content div {
+            margin: 1.5rem 0;
+        }
+
+        .content p {
+            margin: 0.5rem 0;
+        }
+
+        #note {
+            font-weight: 900;
+        }
+
+        .link-container {
+            margin: 1.5rem 0;
+        }
+
+        .link-container a,
+        .link-container span {
+            display: inline-block;
+            font-weight: 700;
+            padding: 0.6rem 1rem;
+            border-radius: 8px;
+            background-color: #333;
+            color: #fff;
+            text-decoration: none;
+            word-break: break-word;
+        }
+
+        .footer p {
+            margin-top: 0.5rem;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                width: 100%;
+                padding: 1rem;
+            }
+
+            a {
+                width: 80%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <table role="presentation" cellspacing="0" cellpadding="0" width="100%">
+        <tr>
+            <td>
+                <table role="presentation" cellspacing="0" cellpadding="0" width="700" class="container">
+                    <tr>
+                        <td class="header">
+                            <h2>We are happy to have you!</h2>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="content">
+                            <p>Dear {{name}},</p>
+                            <div>
+                                <p>
+                                    Thank you for registering with AetherBot! We're excited to
+                                    have you on board.
+                                </p>
+                                <p>
+                                    To ensure the security of your account and start chatting
+                                    with AetherBot, please click on the following link to verify
+                                    your email address:
+                                </p>
+                                <div class="link-container">
+                                    <a id="verifyLink" href="{{FRONTEND_URL}}/verifyEmail?token={{verifyToken}}">Verify
+                                        Your Account</a>
+                                </div>
+                                <p id="note">
+                                    Please note that this verification link will expire in 1
+                                    hour.
+                                </p>
+                                <p>
+                                    If you did not create an account with AetherBot, please
+                                    disregard this email. Your account will not be activated. If
+                                    you have any questions or need assistance, feel free to
+                                    reach out to our support team. We're here to help!
+                                </p>
+                                <p>
+                                    Welcome once again, and we look forward to your active
+                                    participation in the AetherBot community.
+                                </p>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="footer" style="color: #fff">
+                            <p>Best regards,</p>
+                            <p>AetherBot Team</p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+
+</html>

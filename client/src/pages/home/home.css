@@ -1,0 +1,22 @@
+.carouselSection {
+  position: relative;
+}
+
+.carouselSection .contentWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.carouselSection .carouselTitle {
+  font-size: var(--fz-xxl);
+  color: white;
+  font-weight: normal;
+}
+
+@media screen and (max-width: 480px) {
+  .carouselSection .carouselTitle {
+    font-size: var(--fz-xl);
+  }
+}

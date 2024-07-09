@@ -1,0 +1,21 @@
+.bookmarks-main {
+    display: flex;
+    justify-content: center;
+    padding-top: 100px;
+    min-height: 100svh;
+}
+
+.noBookmarks {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 70svh;
+}
+
+.bookmarks-results {
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 1rem;
+    gap: 20px;
+    flex: 1;
+}

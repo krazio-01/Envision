@@ -1,0 +1,19 @@
+.remove-btn button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--fz-md);
+    padding: 0.4rem;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: #fff;
+    border-radius: var(--border-rad);
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.remove-btn button:hover {
+    background: rgba(255, 255, 255, 0.1);
+}

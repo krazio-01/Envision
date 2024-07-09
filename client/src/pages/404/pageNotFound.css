@@ -1,0 +1,26 @@
+.notFound {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 3rem;
+  min-height: 100svh;
+}
+
+.notFound-text {
+  font-size: clamp(var(--fz-xl), 2.5vw, var(--fz-heading));
+}
+
+.notFound-redirect {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  font-size: 22px;
+}
+
+.notFound-redirect a {
+  text-decoration: none;
+  color: #fff;
+  font-weight: 500;
+}
