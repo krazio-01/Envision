@@ -1,6 +1,9 @@
-# Envision
+# Envision 🎬
 
-online streaming of movies and TV shows directly from the browser, built with React.js and Node.js. Users can browse shows, explore the trending, popular, and most rated sections, and much more. The application provides a seamless and user-friendly streaming experience.
+Online moviees or shows streaming service. Users can browse shows, explore the trending, popular, and most rated sections, and much more. The application provides a seamless and user-friendly streaming experience.
+
+## Live Demo 🌐
+Check out the live demo of the application [here](https://envision-watch.vercel.app/).
 
 ## Features
 
@@ -8,14 +11,14 @@ online streaming of movies and TV shows directly from the browser, built with Re
 - **Explore different Sections**: It has Trending, Polpular and Most-rated sectins along with Explore pages
 - **Responsive Design**: Optimized for both desktop and mobile devices.
 
-## Technologies Used
+## Technologies Used 🛠️
 
 - **Frontend**: React
 - **Backend**: Node.js, Express.js
 - **API**: TMDB and Vidsrc
 - **Styling**: CSS
 
-## Installation
+## Installation 🚀
 
 1. **Clone the repository**
    ```bash
@@ -46,8 +49,8 @@ online streaming of movies and TV shows directly from the browser, built with Re
 Open your browser and navigate to http://localhost:5173.
 
 ## Usage
-3. Start Watching: Dive into the verse of shows
-4. Find the one for you: Explore different sections of it and find the one show which suits you.
+3. Start Watching 🍿: Dive into the verse of shows
+4. Find the One for You 🔎: Explore different sections of it and find the one show which suits you.
 
 ## Contributions
 Contributions are welcome! Please fork the repository and create a pull request with your changes. Make sure to follow the coding guidelines and include relevant tests.
