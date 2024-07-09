@@ -32,11 +32,11 @@ const fetchGenres = async (req, res) => {
 };
 
 const discoverMedia = async (req, res) => {
-    const { mediaType, page } = req.query;
+    const { mediaType, page, ...filters } = req.query;
 
     try {
         const { data } = await axios.get(`${BASE_URL}/discover/${mediaType}`, {
-            params: { page },
+            params: { page, ...filters },
             headers,
         });
         res.status(200).json(data);
