@@ -24,7 +24,7 @@ import AuthLayout from "./layouts/AuthLayout";
 import RootLayout from "./layouts/RootLayout";
 import "./index.css";
 
-axios.defaults.baseURL = `${import.meta.env.VITE_APP_SERVER_URL}/api`;
+axios.defaults.baseURL = `${import.meta.env.VITE_APP_SERVER_URL}api`;
 
 const router = createBrowserRouter(
     createRoutesFromElements(
