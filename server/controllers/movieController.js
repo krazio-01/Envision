@@ -20,7 +20,7 @@ const fetchMovieLists = async (req, res) => {
         const response = await axios.get(url, { headers });
         res.json(response.data);
     } catch (error) {
-        console.error("Error fetching movie list:", error);
+        res.status(500).json({ error: error.message });
     }
 };
 

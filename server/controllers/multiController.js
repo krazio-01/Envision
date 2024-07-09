@@ -9,17 +9,28 @@ const headers = {
     accept: "application/json",
 };
 
+const fetchSuggestions = async (req, res) => {
+    const { query } = req.query;
+
+    try {
+        const { data } = await axios.get(`${baseURL}/search/multi?query=${query}`, { headers });
+        res.json(data);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
 const Search = async (req, res) => {
     const { query, page } = req.query;
 
     try {
-        const response = await axios.get(`${baseURL}/search/multi?query=${query}&page=${page}`, {
+        const [data] = await axios.get(`${baseURL}/search/multi?query=${query}&page=${page}`, {
             headers,
         });
-        res.json(response.data);
+        res.json(data);
     } catch (error) {
-        console.error("Error fetching reusults:", error);
+        res.status(500).json({ error: error.message });
     }
 };
 
-export { Search };
+export { fetchSuggestions, Search };

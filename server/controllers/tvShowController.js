@@ -13,10 +13,10 @@ const fetchShowLists = async (req, res) => {
     const { listType } = req.query;
 
     try {
-        const response = await axios.get(`${baseURL}/${listType}`, { headers });
-        res.json(response.data);
+        const { data } = await axios.get(`${baseURL}/${listType}`, { headers });
+        res.json(data);
     } catch (error) {
-        console.error("Error fetching Tv Show list:", error.message);
+        res.status(500).json({ error: error.message });
     }
 };
 
@@ -24,10 +24,10 @@ const fetchSeasonDetails = async (req, res) => {
     const { id, seasonNo } = req.query;
 
     try {
-        const response = await axios.get(`${baseURL}/${id}/season/${seasonNo}`, { headers });
-        res.json(response.data);
+        const { data } = await axios.get(`${baseURL}/${id}/season/${seasonNo}`, { headers });
+        res.json(data);
     } catch (error) {
-        console.error("Error fetching Season details:", error.message);
+        res.status(500).json({ error: error.message });
     }
 };
 
@@ -35,10 +35,10 @@ const fetchEpisodeGroup = async (req, res) => {
     const { id } = req.query;
 
     try {
-        const response = await axios.get(`${baseURL}/${id}/episode_groups`, { headers });
-        res.json(response.data);
+        const { data } = await axios.get(`${baseURL}/${id}/episode_groups`, { headers });
+        res.json(data);
     } catch (error) {
-        console.error("Error fetching Episode Group:", error.message);
+        res.status(500).json({ error: error.message });
     }
 };
 
@@ -46,10 +46,10 @@ const fetchGroupInfo = async (req, res) => {
     const { groupId } = req.query;
 
     try {
-        const response = await axios.get(`${baseURL}/episode_group/${groupId}`, { headers });
-        res.json(response.data);
+        const { data } = await axios.get(`${baseURL}/episode_group/${groupId}`, { headers });
+        res.json(data);
     } catch (error) {
-        console.error("Error fetching Group info:", error.message);
+        res.status(500).json({ error: error.message });
     }
 };
 
