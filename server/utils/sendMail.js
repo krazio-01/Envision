@@ -13,7 +13,7 @@ const sendEmail = async (userEmail, subject, text, html) => {
         });
 
         const mail_configs = {
-            from: `"Aether Bot" <${process.env.USER}>`,
+            from: `"Envision" <${process.env.USER}>`,
             to: userEmail,
             subject: subject,
             text: text,
