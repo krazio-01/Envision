@@ -1,12 +1,14 @@
 # Envision 🎬
 
-Online moviees or shows streaming service. Users can browse shows, explore the trending, popular, and most rated sections, and much more. The application provides a seamless and user-friendly streaming experience.
+Online streaming of movies and TV shows directly from the browser. Users can browse shows, explore the trending, popular, and most rated sections, and much more. The application provides complete authentication functionality and a seamless browsing experience.
 
 ## Live Demo 🌐
 Check out the live demo of the application [here](https://envision-watch.vercel.app/).
 
 ## Features
 
+- **Authentication**: This application has full authentication with verify-email, forgot-password functionality
+- **Bookmark**: User can bookmark their favourite shows and watch them later
 - **Watch any show**: Directly watch movies or shows without worrying about downloading them.
 - **Explore different Sections**: It has Trending, Polpular and Most-rated sectins along with Explore pages
 - **Responsive Design**: Optimized for both desktop and mobile devices.
@@ -49,8 +51,8 @@ Check out the live demo of the application [here](https://envision-watch.vercel.
 Open your browser and navigate to http://localhost:5173.
 
 ## Usage
-3. Start Watching 🍿: Dive into the verse of shows
-4. Find the One for You 🔎: Explore different sections of it and find the one show which suits you.
+1. Start Watching 🍿: Dive into the verse of shows
+2. Find the One for You 🔎: Explore different sections of it and find the one show which suits you.
 
 ## Contributions
 Contributions are welcome! Please fork the repository and create a pull request with your changes. Make sure to follow the coding guidelines and include relevant tests.
