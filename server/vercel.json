@@ -10,7 +10,17 @@
         {
             "src": "/(.*)",
             "dest": "index.js",
-            "methods": ["GET", "PUT", "PATCH", "POST", "DELETE", "OPTIONS"]
+            "methods": [
+                "GET",
+                "PUT",
+                "PATCH",
+                "POST",
+                "DELETE",
+                "OPTIONS"
+            ],
+            "headers": {
+                "Access-Control-Allow-Origin": "*"
+            }
         }
     ]
 }
