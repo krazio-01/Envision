@@ -24,7 +24,7 @@ const Search = async (req, res) => {
     const { query, page } = req.query;
 
     try {
-        const [data] = await axios.get(`${baseURL}/search/multi?query=${query}&page=${page}`, {
+        const { data } = await axios.get(`${baseURL}/search/multi?query=${query}&page=${page}`, {
             headers,
         });
         res.json(data);

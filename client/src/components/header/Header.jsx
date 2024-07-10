@@ -53,12 +53,12 @@ const Header = () => {
     );
 
     const handleInputChange = (e) => {
-        inputRef.current = e.target.value;
-        debouncedHandleSearch(inputRef.current);
+        const inputValue = e.target.value;
+        debouncedHandleSearch(inputValue);
     };
 
     const handleSearch = (e) => {
-        const value = inputRef.current;
+        const value = inputRef.current.value;
 
         if ((e.key === "Enter" || e.type === "click") && value.length > 0) {
             navigate(`/search/${value}`);
@@ -66,7 +66,7 @@ const Header = () => {
             setSuggestions([]);
             setShowSuggestion(false);
 
-            inputRef.current = "";
+            inputRef.current.value = "";
             inputRef.current.blur();
 
             setShowMobileSearch(false);
