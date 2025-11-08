@@ -17,7 +17,7 @@ const signUp = async (req, res) => {
         if (!emailRegex.test(email))
             return res.status(400).json({ message: "Invalid email format" });
 
-        const passwordRegex = /^(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+        const passwordRegex = /^(?=.*[^A-Za-z0-9]).{8,}$/;
         if (!passwordRegex.test(password))
             return res.status(400).json({
                 message:
