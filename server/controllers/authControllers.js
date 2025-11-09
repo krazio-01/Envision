@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from "uuid";
 import sendEmail from "../utils/sendMail.js";
 import jwt from "jsonwebtoken";
 import fs from "fs";
+import path from "path";
 
 const signUp = async (req, res) => {
     try {
@@ -53,7 +54,8 @@ const signUp = async (req, res) => {
         let subject = null,
             html = null;
 
-        const verifyTemplate = fs.readFileSync("./templates/verificationTemplate.html", "utf8");
+        const templatePath = path.join(process.cwd(), "templates", "verificationTemplate.html");
+        const verifyTemplate = fs.readFileSync(templatePath, "utf8");
 
         const verificationContent = verifyTemplate
             .replace(/{{name}}/g, user.name)
@@ -140,7 +142,8 @@ const forgotPasswordRequest = async (req, res) => {
         let subject = null,
             html = null;
 
-        const passwordResetTemplate = fs.readFileSync("./templates/forgot-password.html", "utf8");
+        const templatePath = path.join(process.cwd(), "templates", "forgot-password.html");
+        const passwordResetTemplate = fs.readFileSync(templatePath, "utf8");
 
         const passwordResetContent = passwordResetTemplate
             .replace(/{{FRONTEND_URL}}/g, process.env.FRONTEND_URL)
