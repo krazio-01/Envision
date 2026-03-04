@@ -15,7 +15,7 @@ const Change = () => {
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
     const token = searchParams.get("token");
-    
+
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -41,7 +41,7 @@ const Change = () => {
 
     return (
         <div className="auth-form-container">
-            <h2>Change password</h2>
+            <h1>Change password</h1>
 
             <form onSubmit={handleSubmit}>
                 <div className="input-group">

@@ -26,7 +26,7 @@ const Request = () => {
 
     return (
         <div className="auth-form-container">
-            <h2>Requeest for change</h2>
+            <h1>Requeest for change</h1>
 
             <form onSubmit={handleSubmit}>
                 <div className="input-group">

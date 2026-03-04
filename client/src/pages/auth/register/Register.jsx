@@ -33,7 +33,7 @@ const Register = () => {
 
     return (
         <div className="auth-form-container">
-            <h2>Create an account</h2>
+            <h1>Create an account</h1>
 
             <form onSubmit={handleSubmit}>
                 <div className="input-group">

@@ -15,7 +15,7 @@ const Login = () => {
     const toast = useToast();
     const navigate = useNavigate();
     const setUser = useUserStore((state) => state.setUser);
-    
+
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -34,7 +34,7 @@ const Login = () => {
 
     return (
         <div className="auth-form-container">
-            <h2>Welcome back</h2>
+            <h1>Welcome back</h1>
 
             <form onSubmit={handleSubmit}>
                 <div className="input-group">
