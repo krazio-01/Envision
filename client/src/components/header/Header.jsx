@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import useUserStore from '../../store/store';
-import Profile from './Profile/Profile';
+import Profile from './Profile';
 import NavigationMenu from './NavigationMenu';
 import SearchBar from './SearchBar';
 import { FaUser } from 'react-icons/fa';

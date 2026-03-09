@@ -1,11 +1,10 @@
 import { useRef, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import useToast from "../../../hooks/useToast";
+import useToast from "../../hooks/useToast";
 import axios from "axios";
-import useUserStore from "../../../store/store";
+import useUserStore from "../../store/store";
 import { FaHeart, FaUser } from "react-icons/fa";
 import { IoIosLogOut } from "react-icons/io";
-import "../header.css";
 
 const Profile = () => {
     const { user, clearUser } = useUserStore();
