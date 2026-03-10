@@ -3,7 +3,7 @@ import cors from "cors";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import authRoutes from "./routes/authRoutes.js";
-import bookmarkRoutes from "./routes/bookmarkRoutes.js";
+import userActivityRoutes from "./routes/userActivityRoutes.js";
 import tvShowRoutes from "./routes/tvShowRoutes.js";
 import movieRoutes from "./routes/movieRoutes.js";
 import multiRoutes from "./routes/multiRoutes.js";
@@ -38,7 +38,7 @@ app.use(express.json());
 app.use(cookieParser());
 
 app.use("/api/auth", authRoutes);
-app.use("/api/bookmark", bookmarkRoutes);
+app.use("/api/activity", userActivityRoutes);
 app.use("/api/tv", tvShowRoutes);
 app.use("/api/movie", movieRoutes);
 app.use("/api/multi", multiRoutes);
