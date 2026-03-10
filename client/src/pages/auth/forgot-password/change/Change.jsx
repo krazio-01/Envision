@@ -45,7 +45,7 @@ const Change = () => {
 
             <form onSubmit={handleSubmit}>
                 <div className="input-group">
-                    <label htmlFor="password">PNew password</label>
+                    <label htmlFor="password">New password</label>
                     <input
                         type="password"
                         id="password"
