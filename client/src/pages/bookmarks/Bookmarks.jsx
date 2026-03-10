@@ -14,7 +14,7 @@ const Bookmarks = () => {
     const fetchBookmarks = async () => {
         try {
             setLoading(true);
-            const { data } = await axios.get("/bookmark/fetchBookmarks", {
+            const { data } = await axios.get("/activity/fetchBookmarks", {
                 withCredentials: true,
             });
             setBookmarks(data);

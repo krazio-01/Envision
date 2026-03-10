@@ -19,7 +19,7 @@ const BookmarkBtn = ({ media, mediaType, inDetailsPage = false, inHoverCard = fa
 
         try {
             const { data } = await axios.post(
-                "/bookmark/addBookmark",
+                "/activity/addBookmark",
                 { mediaId: media.id, mediaType },
                 { withCredentials: true }
             );

@@ -1,8 +1,8 @@
-import useToast from "../../../hooks/useToast";
-import useUserStore from "../../../store/store";
-import { MdDeleteOutline } from "react-icons/md";
-import axios from "axios";
-import "./removeBtn.css";
+import useToast from '../../../hooks/useToast';
+import useUserStore from '../../../store/store';
+import { MdDeleteOutline } from 'react-icons/md';
+import axios from 'axios';
+import './removeBtn.css';
 
 const RemoveBtn = ({ media, mediaType, setIsRemoved }) => {
     const toast = useToast();
@@ -10,26 +10,26 @@ const RemoveBtn = ({ media, mediaType, setIsRemoved }) => {
 
     const handleRemove = async () => {
         if (!user) {
-            toast("error", "Please login to use this feature");
+            toast('error', 'Please login to use this feature');
             return;
         }
 
         try {
             const { data } = await axios.post(
-                "/bookmark/removeBookmark",
+                '/activity/removeBookmark',
                 { mediaId: media.id, mediaType },
-                { withCredentials: true }
+                { withCredentials: true },
             );
-            setIsRemoved(prev => !prev);
-            toast("success", data.message);
+            setIsRemoved((prev) => !prev);
+            toast('success', data.message);
         } catch (error) {
-            toast("error", error.response?.data?.message);
+            toast('error', error.response?.data?.message);
         }
     };
 
     return (
         <div className="remove-btn">
-            <button className="action-btn" onClick={handleRemove} >
+            <button className="action-btn" onClick={handleRemove}>
                 <MdDeleteOutline />
             </button>
         </div>
