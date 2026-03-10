@@ -1,34 +1,30 @@
-import User from "../models/userModel.js";
-import bcryptjs from "bcryptjs";
-import { v4 as uuidv4 } from "uuid";
-import sendEmail from "../utils/sendMail.js";
-import jwt from "jsonwebtoken";
-import fs from "fs";
-import path from "path";
+import User from '../models/userModel.js';
+import bcryptjs from 'bcryptjs';
+import { v4 as uuidv4 } from 'uuid';
+import sendEmail from '../utils/sendMail.js';
+import jwt from 'jsonwebtoken';
+import fs from 'fs';
+import path from 'path';
 
 const signUp = async (req, res) => {
     try {
         const { name, email, password } = req.body;
 
         // validations
-        if (!name || !email || !password)
-            return res.status(400).json({ message: "Please fill all fields" });
+        if (!name || !email || !password) return res.status(400).json({ message: 'Please fill all fields' });
 
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(email))
-            return res.status(400).json({ message: "Invalid email format" });
+        if (!emailRegex.test(email)) return res.status(400).json({ message: 'Invalid email format' });
 
         const passwordRegex = /^(?=.*[^A-Za-z0-9]).{8,}$/;
         if (!passwordRegex.test(password))
             return res.status(400).json({
-                message:
-                    "Password must be at least 8 characters long and include at least one special character",
+                message: 'Password must be at least 8 characters long and include at least one special character',
             });
 
         // Check if user already exists
         const userExists = await User.findOne({ email });
-        if (userExists)
-            return res.status(400).json({ message: "This account is already registered" });
+        if (userExists) return res.status(400).json({ message: 'This account is already registered' });
 
         // Hash password
         const salt = await bcryptjs.genSalt(10);
@@ -42,7 +38,7 @@ const signUp = async (req, res) => {
             name: name,
             email: email,
             password: hashedPassword,
-            avatar: "../images/useravatar.webp",
+            avatar: '../images/useravatar.webp',
             verifyToken: hashedToken,
             verifyTokenExpiry: Date.now() + 3600000, // 1 hour from now
         });
@@ -54,8 +50,8 @@ const signUp = async (req, res) => {
         let subject = null,
             html = null;
 
-        const templatePath = path.join(process.cwd(), "templates", "verificationTemplate.html");
-        const verifyTemplate = fs.readFileSync(templatePath, "utf8");
+        const templatePath = path.join(process.cwd(), 'templates', 'verificationTemplate.html');
+        const verifyTemplate = fs.readFileSync(templatePath, 'utf8');
 
         const verificationContent = verifyTemplate
             .replace(/{{name}}/g, user.name)
@@ -63,16 +59,16 @@ const signUp = async (req, res) => {
             .replace(/{{verifyToken}}/g, user.verifyToken);
 
         // send verification mail to the user
-        subject = "Account Verification";
+        subject = 'Account Verification';
         html = verificationContent;
         await sendEmail(to, subject, null, html);
 
         res.status(201).json({
-            message: "Registration successful",
+            message: 'Registration successful',
             user: user,
         });
     } catch (err) {
-        res.status(500).json({ message: "Internal server error" });
+        res.status(500).json({ message: 'Internal server error' });
     }
 };
 
@@ -81,15 +77,15 @@ const login = async (req, res) => {
         const { email, password } = req.body;
 
         // validations
-        if (!email || !password) return res.status(400).json({ message: "Please fill all fields" });
+        if (!email || !password) return res.status(400).json({ message: 'Please fill all fields' });
 
         const user = await User.findOne({ email });
-        if (!user) return res.status(404).json({ message: "Invalid credentials" });
+        if (!user) return res.status(404).json({ message: 'Invalid credentials' });
 
-        if (!user.isVerfied) return res.status(401).json({ message: "Please verify your email first" });
+        if (!user.isVerfied) return res.status(401).json({ message: 'Please verify your email first' });
 
         const isMatch = await bcryptjs.compare(password, user.password);
-        if (!isMatch) return res.status(401).json({ message: "Invalid credentials" });
+        if (!isMatch) return res.status(401).json({ message: 'Invalid credentials' });
 
         // Generate JWT token
         const tokenPayload = {
@@ -98,19 +94,19 @@ const login = async (req, res) => {
             email: user.email,
         };
         const token = jwt.sign(tokenPayload, process.env.JWT_SECRET, {
-            expiresIn: "1d",
+            expiresIn: '1d',
         });
 
         // Set the cookie
-        res.cookie("token", token, {
+        res.cookie('token', token, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: 'None',
-            maxAge: 24 * 60 * 60 * 1000, // 1 day
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+            maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
         });
 
         res.status(200).json({
-            message: "Login successful",
+            message: 'Login successful',
             user: {
                 id: user._id,
                 name: user.name,
@@ -118,7 +114,7 @@ const login = async (req, res) => {
             },
         });
     } catch (err) {
-        res.status(500).json({ message: "Internal server error" });
+        res.status(500).json({ message: 'Internal server error' });
     }
 };
 
@@ -126,10 +122,10 @@ const forgotPasswordRequest = async (req, res) => {
     try {
         const { email } = req.body;
 
-        if (!email) return res.status(400).json({ message: "Email is required" });
+        if (!email) return res.status(400).json({ message: 'Email is required' });
 
         const user = await User.findOne({ email });
-        if (!user) return res.status(404).json({ message: "User not found" });
+        if (!user) return res.status(404).json({ message: 'User not found' });
 
         const resetToken = uuidv4();
 
@@ -142,15 +138,15 @@ const forgotPasswordRequest = async (req, res) => {
         let subject = null,
             html = null;
 
-        const templatePath = path.join(process.cwd(), "templates", "forgot-password.html");
-        const passwordResetTemplate = fs.readFileSync(templatePath, "utf8");
+        const templatePath = path.join(process.cwd(), 'templates', 'forgot-password.html');
+        const passwordResetTemplate = fs.readFileSync(templatePath, 'utf8');
 
         const passwordResetContent = passwordResetTemplate
             .replace(/{{FRONTEND_URL}}/g, process.env.FRONTEND_URL)
             .replace(/{{forgotPasswordToken}}/g, resetToken);
 
         // send verification mail to the user
-        subject = "Password change request for Envision";
+        subject = 'Password change request for Envision';
         html = passwordResetContent;
         await sendEmail(to, subject, null, html);
 
@@ -182,7 +178,7 @@ const forgotPasswordChange = async (req, res) => {
 
         await user.save();
 
-        return res.status(200).json({ message: "Password reset scucessfully" });
+        return res.status(200).json({ message: 'Password reset scucessfully' });
     } catch (error) {
         return res.status(500).json({ message: error.message });
     }
@@ -197,30 +193,30 @@ const verifyEmail = async (req, res) => {
             verifyTokenExpiry: { $gt: Date.now() },
         });
 
-        if (!user) return res.status(404).json({ message: "Invalid Link" });
+        if (!user) return res.status(404).json({ message: 'Invalid Link' });
 
         user.isVerfied = true;
         user.verifyToken = undefined;
         user.verifyTokenExpiry = undefined;
 
         await user.save();
-        res.status(200).json({ message: "Email verified successfully" });
+        res.status(200).json({ message: 'Email verified successfully' });
     } catch (err) {
-        res.status(500).json({ message: "Internal server error" });
+        res.status(500).json({ message: 'Internal server error' });
     }
 };
 
 const logout = async (req, res) => {
     try {
-        res.cookie("token", "", {
+        res.cookie('token', '', {
             httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
+            secure: process.env.NODE_ENV === 'production',
             expires: new Date(0),
         });
 
-        res.status(200).json({ message: "Logged out successfully" });
+        res.status(200).json({ message: 'Logged out successfully' });
     } catch (err) {
-        res.status(500).json({ message: "Internal server error" });
+        res.status(500).json({ message: 'Internal server error' });
     }
 };
 
