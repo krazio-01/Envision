@@ -1,7 +1,7 @@
+import 'dotenv/config';
 import express from "express";
 import cors from "cors";
 import mongoose from "mongoose";
-import dotenv from "dotenv";
 import authRoutes from "./routes/authRoutes.js";
 import userActivityRoutes from "./routes/userActivityRoutes.js";
 import tvShowRoutes from "./routes/tvShowRoutes.js";
@@ -10,8 +10,6 @@ import multiRoutes from "./routes/multiRoutes.js";
 import mediaRoutes from "./routes/mediaRoutes.js";
 import cookieParser from "cookie-parser";
 
-// Load environment variables from .env file
-dotenv.config();
 
 // Initialize the express application
 const app = express();
