@@ -1,6 +1,4 @@
-import dotEnv from "dotenv";
 import axios from "axios";
-dotEnv.config();
 
 const BASE_URL = "https://api.themoviedb.org/3";
 
