@@ -11,6 +11,7 @@
     "author": "",
     "license": "ISC",
     "dependencies": {
+        "@google/genai": "^1.44.0",
         "axios": "^1.6.2",
         "bcryptjs": "^2.4.3",
         "cookie-parser": "^1.4.6",
