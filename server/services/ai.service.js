@@ -48,16 +48,37 @@ export const generateMovieSuggestions = async (userProfile = {}, userPrompt = ''
     ];
 
     const promptContext = userContextParts.filter(Boolean).join('\n');
+    const MAX_RETRIES = 3;
+    let attempt = 0;
+    let delay = 1000;
 
-    const response = await ai.models.generateContent({
-        model: 'gemini-2.5-flash',
-        contents: promptContext,
-        config: {
-            systemInstruction: SYSTEM_INSTRUCTION,
-            responseMimeType: 'application/json',
-            responseSchema: RESPONSE_SCHEMA,
-        },
-    });
+    while (attempt < MAX_RETRIES) {
+        try {
+            const response = await ai.models.generateContent({
+                model: 'gemini-2.5-flash',
+                contents: promptContext,
+                config: {
+                    systemInstruction: SYSTEM_INSTRUCTION,
+                    responseMimeType: 'application/json',
+                    responseSchema: RESPONSE_SCHEMA,
+                },
+            });
 
-    return JSON.parse(response.text);
+            return JSON.parse(response.text);
+        } catch (error) {
+            if (error.status === 503 || error.status === 429) {
+                attempt++;
+
+                if (attempt >= MAX_RETRIES) {
+                    console.error('[AI Service] Max retries reached. Failing gracefully.');
+                    throw error;
+                }
+
+                await new Promise((resolve) => setTimeout(resolve, delay));
+                delay *= 2;
+            } else {
+                throw error;
+            }
+        }
+    }
 };
