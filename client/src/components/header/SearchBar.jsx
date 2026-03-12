@@ -11,25 +11,30 @@ const SearchBar = ({ user }) => {
     const [searchMode, setSearchMode] = useState('standard');
     const [inputValue, setInputValue] = useState('');
     const [showMobileSearch, setShowMobileSearch] = useState(false);
-    const [suggestions, setSuggestions] = useState([]);
-    const [showSuggestion, setShowSuggestion] = useState(false);
-    const [aiSuggestions, setAiSuggestions] = useState([]);
-    const [showAiDropdown, setShowAiDropdown] = useState(false);
-    const [isAiLoading, setIsAiLoading] = useState(false);
+    const [standardSearch, setStandardSearch] = useState({
+        suggestions: [],
+        showDropdown: false,
+    });
+    const [aiSearch, setAiSearch] = useState({
+        suggestions: [],
+        showDropdown: false,
+        isLoading: false,
+    });
 
     const navigate = useNavigate();
     const toast = useToast();
 
+    const updateStandard = (updates) => setStandardSearch((prev) => ({ ...prev, ...updates }));
+    const updateAi = (updates) => setAiSearch((prev) => ({ ...prev, ...updates }));
+
     const fetchSuggestions = async (query) => {
         if (!query.trim()) {
-            setShowSuggestion(false);
-            return setSuggestions([]);
+            return updateStandard({ showDropdown: false, suggestions: [] });
         }
         try {
             const { data } = await axios.get(`/multi/suggestions?query=${query}`);
-            setSuggestions(data.results);
-            setShowSuggestion(true);
-            setShowAiDropdown(false);
+            updateStandard({ suggestions: data.results, showDropdown: true });
+            updateAi({ showDropdown: false });
         } catch (error) {
             console.error('Fetch Error:', error);
         }
@@ -42,7 +47,7 @@ const SearchBar = ({ user }) => {
         setInputValue(value);
 
         if (searchMode === 'standard') debouncedSearch(value);
-        else setShowSuggestion(false);
+        else updateStandard({ showDropdown: false });
     };
 
     const handleStandardSearch = () => {
@@ -53,29 +58,32 @@ const SearchBar = ({ user }) => {
     };
 
     const handleAiSuggest = async () => {
-        if (!inputValue.trim() && !user) {
-            return toast('error', 'Guests need to type a vibe! Log in for pure personalized magic.');
-        }
+        if (aiSearch.isLoading) return;
 
-        setShowSuggestion(false);
-        setShowAiDropdown(true);
-        setIsAiLoading(true);
+        if (!inputValue.trim() && !user)
+            return toast('error', 'Search requires a prompt. Log in for personalized results.');
+
+        updateStandard({ showDropdown: false });
+        updateAi({ showDropdown: true, isLoading: true });
 
         try {
-            const { data } = await axios.post('/ideas/recommendations', { context: inputValue });
-            setAiSuggestions(data.data);
+            const { data } = await axios.post(
+                '/ideas/recommendations',
+                { prompt: inputValue },
+                { withCredentials: true },
+            );
+            updateAi({ suggestions: data.data });
         } catch (error) {
             console.error('AI Fetch Error:', error);
             toast('error', 'Failed to fetch AI suggestions.');
         } finally {
-            setIsAiLoading(false);
+            updateAi({ isLoading: false });
         }
     };
 
     const resetSearchState = () => {
-        setSuggestions([]);
-        setShowSuggestion(false);
-        setShowAiDropdown(false);
+        updateStandard({ suggestions: [], showDropdown: false });
+        updateAi({ suggestions: [], showDropdown: false });
         setInputValue('');
         setShowMobileSearch(false);
     };
@@ -83,8 +91,8 @@ const SearchBar = ({ user }) => {
     const toggleSearchMode = () => {
         setSearchMode((prev) => (prev === 'standard' ? 'ai' : 'standard'));
         setInputValue('');
-        setShowSuggestion(false);
-        setShowAiDropdown(false);
+        updateStandard({ showDropdown: false });
+        updateAi({ showDropdown: false });
     };
 
     const handleKeyDown = (e) => {
@@ -107,6 +115,7 @@ const SearchBar = ({ user }) => {
             <div className={`search_wrapper ${showMobileSearch ? 'show' : ''} ${isAiMode ? 'ai-active' : ''}`}>
                 <div className="search">
                     <button
+                        disabled={aiSearch.isLoading}
                         className={`mode-toggle-btn ${isAiMode ? 'ai-active' : ''}`}
                         onClick={toggleSearchMode}
                         type="button"
@@ -126,7 +135,7 @@ const SearchBar = ({ user }) => {
                         type="text"
                         value={inputValue}
                         placeholder={
-                            isAiMode ? "Type a vibe (e.g., 'funny sci-fi')..." : 'Search for movies or TV shows...'
+                            isAiMode ? "Search by mood, theme, or genre..." : 'Search for movies or TV shows...'
                         }
                         onChange={handleInputChange}
                         onKeyDown={handleKeyDown}
@@ -134,16 +143,17 @@ const SearchBar = ({ user }) => {
 
                     <SuggestionsDropdown
                         mode={searchMode}
-                        show={searchMode === 'ai' ? showAiDropdown : showSuggestion}
-                        suggestions={searchMode === 'ai' ? aiSuggestions : suggestions}
-                        isLoading={isAiLoading}
+                        show={isAiMode ? aiSearch.showDropdown : standardSearch.showDropdown}
+                        suggestions={isAiMode ? aiSearch.suggestions : standardSearch.suggestions}
+                        isLoading={aiSearch.isLoading}
                         user={user}
-                        onClose={() => setShowAiDropdown(false)}
+                        onClose={() => updateAi({ showDropdown: false })}
                         onViewAll={handleStandardSearch}
-                        setShowSuggestion={setShowSuggestion}
+                        setShowSuggestion={(val) => updateStandard({ showDropdown: val })}
                     />
 
                     <button
+                        disabled={aiSearch.isLoading}
                         className={`action-btn ${searchMode}`}
                         type="button"
                         onClick={isAiMode ? handleAiSuggest : handleStandardSearch}
