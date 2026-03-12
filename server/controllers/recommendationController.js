@@ -3,18 +3,21 @@ import { generateMovieSuggestions } from '../services/ai.service.js';
 import { tmdbApi } from '../utils/tmdbClient.js';
 
 const getMediaTitlesFromIds = async (mediaItems) => {
-    try {
-        const titles = await Promise.all(
-            mediaItems.map(async (item) => {
-                const response = await tmdbApi.get(`/${item.mediaType}/${item.mediaId}`);
-                return response.data.title || response.data.name;
-            }),
-        );
-        return titles.filter(Boolean);
-    } catch (error) {
-        console.error('Error fetching media titles from TMDB:', error.message);
-        return [];
-    }
+    if (!mediaItems || mediaItems.length === 0) return [];
+
+    const titles = await Promise.all(
+        mediaItems.map((item) =>
+            tmdbApi
+                .get(`/${item.mediaType}/${item.mediaId}`)
+                .then((response) => response.data.title || response.data.name)
+                .catch((error) => {
+                    console.error(`TMDB fetch failed for ${item.mediaId}:`, error.message);
+                    return null;
+                }),
+        ),
+    );
+
+    return titles.filter(Boolean);
 };
 
 export const getPersonalizedRecommendations = async (req, res) => {
@@ -29,74 +32,67 @@ export const getPersonalizedRecommendations = async (req, res) => {
         };
 
         if (userId) {
-            const activity = await UserActivity.findOne({ userId });
+            const activity = await UserActivity.findOne({ userId }).lean();
 
             if (activity) {
-                if (activity.bookmarks.length > 0)
-                    userProfile.bookmarks = await getMediaTitlesFromIds(activity.bookmarks);
-                if (activity.completed.length > 0)
-                    userProfile.completed = await getMediaTitlesFromIds(activity.completed);
-                if (activity.dropped.length > 0) userProfile.abandoned = await getMediaTitlesFromIds(activity.dropped);
+                const [bookmarks, completed, abandoned] = await Promise.all([
+                    getMediaTitlesFromIds(activity.bookmarks),
+                    getMediaTitlesFromIds(activity.completed),
+                    getMediaTitlesFromIds(activity.dropped),
+                ]);
+
+                userProfile.bookmarks = bookmarks;
+                userProfile.completed = completed;
+                userProfile.abandoned = abandoned;
             }
         }
 
-        // Require EITHER a logged-in user with history OR a prompt
         const hasHistory = userProfile.bookmarks.length > 0 || userProfile.completed.length > 0;
-        if (!userId && (!userPrompt || userPrompt.trim() === '') && !hasHistory) {
+
+        if (!userPrompt?.trim() && !hasHistory) {
             return res.status(400).json({
                 success: false,
-                error: 'Please provide a search prompt or log in for recommendations.',
+                error: 'Please provide a search prompt or log in to use your history for suggestions.',
             });
         }
 
-        // Pass the full profile to the AI
         const aiRecommendations = await generateMovieSuggestions(userProfile, userPrompt);
 
-        // TMDB Enrichment Phase
         const enrichedRecommendations = await Promise.all(
             aiRecommendations.map(async (recommendation) => {
-                try {
-                    let tmdbData = null;
-                    const mediaType = recommendation.mediaType;
+                const { mediaType, tmdbId, title, reason } = recommendation;
+                let tmdbData = null;
 
-                    if (recommendation.tmdbId) {
+                try {
+                    if (tmdbId) {
                         try {
-                            const { data } = await tmdbApi.get(`/${mediaType}/${recommendation.tmdbId}`);
-                            tmdbData = data;
-                            tmdbData.media_type = mediaType;
+                            const { data } = await tmdbApi.get(`/${mediaType}/${tmdbId}`);
+                            tmdbData = { ...data, media_type: mediaType };
                         } catch (idErr) {
-                            console.log(`TMDB ID fetch failed for ${recommendation.title}. Falling back to search...`);
+                            console.log(`TMDB ID fetch failed for ${title}. Falling back to search...`);
                         }
                     }
 
                     if (!tmdbData) {
-                        const { data } = await tmdbApi.get(
-                            `/search/multi?query=${encodeURIComponent(recommendation.title)}`,
-                        );
+                        const { data } = await tmdbApi.get(`/search/multi?query=${encodeURIComponent(title)}`);
 
-                        if (data && data.results && data.results.length > 0)
-                            tmdbData = data.results.find((item) => item.media_type === mediaType) || data.results[0];
+                        const results = data?.results || [];
+                        tmdbData = results.find((item) => item.media_type === mediaType) || results[0];
                     }
 
-                    if (tmdbData) {
-                        return {
-                            ...tmdbData,
-                            reason: recommendation.reason,
-                        };
-                    }
-                    return null;
+                    return tmdbData ? { ...tmdbData, reason } : null;
                 } catch (error) {
-                    console.error(`Failed to enrich data for ${recommendation.title}:`, error.message);
+                    console.error(`Failed to enrich data for ${title}:`, error.message);
                     return null;
                 }
             }),
         );
 
-        const finalData = enrichedRecommendations.filter((item) => item !== null);
+        const finalData = enrichedRecommendations.filter(Boolean);
 
         return res.status(200).json({ success: true, data: finalData });
     } catch (error) {
-        console.error('Controller Error:', error);
+        console.error('Recommendations Controller Error:', error);
         return res.status(500).json({ success: false, error: 'Failed to fetch recommendations.' });
     }
 };
