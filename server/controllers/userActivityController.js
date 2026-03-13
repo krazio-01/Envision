@@ -70,7 +70,15 @@ const markAsCompleted = async (req, res) => {
     if (!userId || !mediaId || !mediaType) return res.status(400).json({ message: 'Invalid request data' });
 
     try {
-        await UserActivity.findOneAndUpdate({ userId }, { $pull: { completed: { mediaId: String(mediaId) } } });
+        await UserActivity.findOneAndUpdate(
+            { userId },
+            {
+                $pull: {
+                    completed: { mediaId: String(mediaId) },
+                    dropped: { mediaId: String(mediaId) }
+                }
+            }
+        );
 
         await UserActivity.findOneAndUpdate(
             { userId },
@@ -99,7 +107,15 @@ const markAsDropped = async (req, res) => {
     if (!userId || !mediaId || !mediaType) return res.status(400).json({ message: 'Invalid request data' });
 
     try {
-        await UserActivity.findOneAndUpdate({ userId }, { $pull: { dropped: { mediaId: String(mediaId) } } });
+        await UserActivity.findOneAndUpdate(
+            { userId },
+            {
+                $pull: {
+                    dropped: { mediaId: String(mediaId) },
+                    completed: { mediaId: String(mediaId) },
+                },
+            },
+        );
 
         await UserActivity.findOneAndUpdate(
             { userId },
