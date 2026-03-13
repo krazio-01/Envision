@@ -1,12 +1,12 @@
-import { useState, useEffect, useMemo } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { generateImageUrl } from "../../utils/movieUtils";
-import dayjs from "dayjs";
-import axios from "axios";
-import BookmarkBtn from "../Ui/bookmarkBtn/BookmarkBtn";
-import { IoPlayOutline, IoSettingsOutline } from "react-icons/io5";
-import { PuffLoader } from "react-spinners";
-import "./player.css";
+import { useState, useEffect, useMemo } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { generateImageUrl } from '../../utils/movieUtils';
+import dayjs from 'dayjs';
+import axios from 'axios';
+import BookmarkBtn from '../Ui/bookmarkBtn/BookmarkBtn';
+import { IoPlayOutline, IoSettingsOutline } from 'react-icons/io5';
+import { PuffLoader } from 'react-spinners';
+import './player.css';
 
 const Player = ({ media }) => {
     const { mediaType, id } = useParams();
@@ -21,10 +21,8 @@ const Player = ({ media }) => {
 
     const navigate = useNavigate();
 
-    const initialSeason =
-        Number((sessionStorage.getItem(`currentSeason_${id}`) || "").match(/\d+/)) || 1;
-    const initialEpisode =
-        Number((sessionStorage.getItem(`currentEpisode_${id}`) || "").match(/\d+/)) || 1;
+    const initialSeason = Number((sessionStorage.getItem(`currentSeason_${id}`) || '').match(/\d+/)) || 1;
+    const initialEpisode = Number((sessionStorage.getItem(`currentEpisode_${id}`) || '').match(/\d+/)) || 1;
 
     const [currentSeason, setCurrentSeason] = useState(initialSeason);
     const [currentEpisode, setCurrentEpisode] = useState(initialEpisode);
@@ -39,10 +37,10 @@ const Player = ({ media }) => {
                 const pick = response.data.results.reduce(
                     (prevItem, currentItem) =>
                         currentItem.group_count >= prevItem.group_count &&
-                        currentItem.episode_count > prevItem.episode_count
+                            currentItem.episode_count > prevItem.episode_count
                             ? currentItem
                             : prevItem,
-                    response.data.results[0]
+                    response.data.results[0],
                 );
 
                 const groupInfo = await axios.get(`/${mediaType}/group_info?groupId=${pick.id}`);
@@ -51,12 +49,12 @@ const Player = ({ media }) => {
                 setEpisodeGroupExists(true);
                 setLoading(false);
             } catch (error) {
-                console.error("Error fetching data from the backend:", error.message);
+                console.error('Error fetching data from the backend:', error.message);
                 setLoading(false);
             }
         };
 
-        if (mediaType === "tv") fetchEpisodeGroups();
+        if (mediaType === 'tv') fetchEpisodeGroups();
     }, []);
 
     useEffect(() => {
@@ -68,33 +66,28 @@ const Player = ({ media }) => {
         const fetchSeasonDetails = async () => {
             try {
                 setLoading(true);
-                const response = await axios.get(
-                    `/${mediaType}/season_details?id=${id}&seasonNo=${currentSeason}`
-                );
+                const response = await axios.get(`/${mediaType}/season_details?id=${id}&seasonNo=${currentSeason}`);
                 setData(response.data);
                 setLoading(false);
             } catch (error) {
-                console.error("Error fetching data from the backend:", error.message);
+                console.error('Error fetching data from the backend:', error.message);
             }
         };
 
-        if (!episodeGroupExists && mediaType === "tv") fetchSeasonDetails();
+        if (!episodeGroupExists && mediaType === 'tv') fetchSeasonDetails();
     }, [currentSeason]);
 
     const linkGenerator = (id) =>
-        `https://vidsrc.to/embed/${mediaType}/${id}${
-            mediaType === "tv" ? `/${currentSeason}/${currentEpisode}` : ""
-        }`;
+        `https://vidsrcme.su/embed/${mediaType}/${id}${mediaType === 'tv' ? `/${currentSeason}/${currentEpisode}` : ''}`;
+
 
     const filteredSeasons = useMemo(
         () =>
             media?.seasons?.filter((season) => {
                 const airDate = dayjs(season.air_date);
-                return (
-                    (!airDate.isAfter(dayjs()) && season.season_number !== 0) || airDate === null
-                );
+                return (!airDate.isAfter(dayjs()) && season.season_number !== 0) || airDate === null;
             }),
-        [media?.seasons]
+        [media?.seasons],
     );
 
     const handleEpSelect = (season, episodeIndex) => {
@@ -109,7 +102,7 @@ const Player = ({ media }) => {
         return seasons.map((seasonNum, index) => (
             <a
                 key={index}
-                className={`dropdown-item ${currentSeason === seasonNum ? "active" : ""}`}
+                className={`dropdown-item ${currentSeason === seasonNum ? 'active' : ''}`}
                 data-comment-id={`envision_${index}`}
                 data-season={seasonNum}
                 onClick={() => {
@@ -123,16 +116,10 @@ const Player = ({ media }) => {
     };
 
     const renderEpisodes = () => {
-        const episodes = episodeGroupExists
-            ? data?.groups[currentSeason - 1]?.episodes
-            : data?.episodes;
+        const episodes = episodeGroupExists ? data?.groups[currentSeason - 1]?.episodes : data?.episodes;
         return episodes?.map((episode, episodeIndex) => (
-            <div
-                key={episodeIndex + 1}
-                className="episode"
-                onClick={() => handleEpSelect(currentSeason, episodeIndex)}
-            >
-                <a className={`${currentEpisode === episodeIndex + 1 ? "active" : ""}`}>
+            <div key={episodeIndex + 1} className="episode" onClick={() => handleEpSelect(currentSeason, episodeIndex)}>
+                <a className={`${currentEpisode === episodeIndex + 1 ? 'active' : ''}`}>
                     <span className="episode-num">Episode {episodeIndex + 1}</span>
                     <span className="episode-name">{episode.name}</span>
                 </a>
@@ -171,9 +158,9 @@ const Player = ({ media }) => {
                                 src={linkGenerator(media?.id)}
                                 allow="autoplay; fullscreen"
                                 style={{
-                                    width: "100%",
-                                    height: "100%",
-                                    overflow: "hidden",
+                                    width: '100%',
+                                    height: '100%',
+                                    overflow: 'hidden',
                                 }}
                                 onLoad={() => setIframeLoading(false)}
                             />
@@ -203,22 +190,19 @@ const Player = ({ media }) => {
                         </div>
                     </div>
                 </div>
-                {mediaType === "tv" ? (
+                {mediaType === 'tv' ? (
                     <div className="series-data">
                         {!loading ? (
                             <>
                                 <div className="season">
                                     <div className="dropdown">
-                                        <button
-                                            className="btn dropdown-toggle"
-                                            onClick={() => setShowMenu(!showMenu)}
-                                        >
+                                        <button className="btn dropdown-toggle" onClick={() => setShowMenu(!showMenu)}>
                                             {`Season ${currentSeason}`}
                                         </button>
                                         <div
                                             className="dropdown-menu"
                                             style={{
-                                                display: showMenu ? "block" : "none",
+                                                display: showMenu ? 'block' : 'none',
                                             }}
                                         >
                                             {renderSeasonItems()}
