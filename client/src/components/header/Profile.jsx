@@ -1,7 +1,6 @@
 import { useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import useToast from '../../hooks/useToast';
-import axios from 'axios';
 import useUserStore from '../../store/store';
 import { FaHeart, FaUser } from 'react-icons/fa';
 import { IoIosLogOut } from 'react-icons/io';
@@ -18,7 +17,6 @@ const Profile = () => {
 
     const handleLogout = async () => {
         try {
-            await axios.post('/auth/logout', {}, { withCredentials: true });
             clearUser();
             window.location.reload();
         } catch (error) {
