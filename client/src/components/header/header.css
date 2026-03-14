@@ -631,17 +631,16 @@
     }
 }
 
-@media screen and (max-width: 480px) {
+@media screen and (max-width: 600px) {
     .container {
         padding: 0 1rem;
     }
 
     .header-wrapper {
-        .options {
-            display: none;
-        }
+        gap: 1rem;
 
         .search-container {
+            margin-left: auto;
             max-width: fit-content;
         }
 
@@ -672,10 +671,6 @@
 
         .search {
             width: 100%;
-        }
-
-        .search_suggest.show {
-            display: none;
         }
     }
 }
