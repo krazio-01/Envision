@@ -2,12 +2,15 @@ import { useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { MdMovie } from 'react-icons/md';
 import { BiSolidMoviePlay } from 'react-icons/bi';
+import useClickOutside from '../../hooks/useClickOutside';
 
 const NavigationMenu = ({ Logo }) => {
     const [isMenuClicked, setIsMenuClicked] = useState(false);
     const menuRef = useRef();
 
     const toggleMenu = () => setIsMenuClicked(!isMenuClicked);
+
+    useClickOutside(menuRef, () => setIsMenuClicked(false));
 
     return (
         <div className="start">
