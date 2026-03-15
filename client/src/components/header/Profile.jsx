@@ -32,25 +32,24 @@ const Profile = () => {
                 {userInitial ? <span>{userInitial}</span> : <FaUser />}
             </div>
 
-            {isDropdownOpen && (
-                <div className="profile-menu">
-                    <div className="user-info">
-                        <p className="user-name">{user?.name || 'Guest'}</p>
-                        <p className="user-email">{user?.email || 'Not logged in'}</p>
-                    </div>
-
-                    <div className="profile-divider" />
-
-                    <Link to="/bookmarks" className="profile-menu-item" onClick={() => setIsDropdownOpen(false)}>
-                        <FaHeart />
-                        <span>Bookmarks</span>
-                    </Link>
-                    <button className="profile-menu-item logout-btn" onClick={handleLogout}>
-                        <IoIosLogOut />
-                        <span>Logout</span>
-                    </button>
+            <div className={`profile-menu glass-popover ${isDropdownOpen ? 'show' : ''}`}>
+                <div className="user-info">
+                    <p className="user-name">{user?.name || 'Guest'}</p>
+                    <p className="user-email">{user?.email || 'Not logged in'}</p>
                 </div>
-            )}
+
+                <div className="profile-divider" />
+
+                <Link to="/bookmarks" className="glass-popover-item" onClick={() => setIsDropdownOpen(false)}>
+                    <FaHeart />
+                    <span>Bookmarks</span>
+                </Link>
+
+                <button className="glass-popover-item logout-btn" onClick={handleLogout}>
+                    <IoIosLogOut />
+                    <span>Logout</span>
+                </button>
+            </div>
         </div>
     );
 };

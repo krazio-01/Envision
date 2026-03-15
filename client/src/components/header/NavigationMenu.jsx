@@ -13,23 +13,23 @@ const NavigationMenu = ({ Logo }) => {
     useClickOutside(menuRef, () => setIsMenuClicked(false));
 
     return (
-        <div className="start">
+        <div className="start" ref={menuRef}>
             <div className="burger-menu" onClick={toggleMenu}>
                 <div className={`burger-bar ${isMenuClicked ? 'clicked' : 'unclicked'}`}></div>
                 <div className={`burger-bar ${isMenuClicked ? 'clicked' : 'unclicked'}`}></div>
                 <div className={`burger-bar ${isMenuClicked ? 'clicked' : 'unclicked'}`}></div>
             </div>
 
-            <div className={`menu ${isMenuClicked ? 'visible' : ''}`} ref={menuRef}>
+            <div className={`menu glass-popover ${isMenuClicked ? 'show' : ''}`} >
                 <h4>Explore</h4>
                 <ul>
                     <li>
-                        <Link to="/explore/movie" className="menu-item" onClick={toggleMenu}>
+                        <Link to="/explore/movie" className="glass-popover-item" onClick={toggleMenu}>
                             <MdMovie /> <span>Movies</span>
                         </Link>
                     </li>
                     <li>
-                        <Link to="/explore/tv" className="menu-item" onClick={toggleMenu}>
+                        <Link to="/explore/tv" className="glass-popover-item" onClick={toggleMenu}>
                             <BiSolidMoviePlay /> <span>TV Shows</span>
                         </Link>
                     </li>

@@ -54,41 +54,25 @@
         }
 
         .menu {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            position: absolute;
-            width: 150px;
-            height: 0;
-            padding: 0;
             top: 70px;
-            background-color: rgb(0, 0, 0, 0.7);
-            border-radius: 12px;
-            z-index: -1;
-            overflow: hidden;
-            transition: all 0.3s ease-in-out;
+            left: 2rem;
+            width: 200px;
 
             h4 {
-                margin-bottom: 0.3rem;
+                font-size: var(--fz-xs);
+                color: #a0a0a0;
+                padding: 0.5rem var(--fz-md);
+                margin-bottom: 0.25rem;
+                text-transform: uppercase;
+                letter-spacing: 1px;
             }
 
-            ul li {
-                list-style: none;
+            ul {
+                padding: 0;
+                margin: 0;
 
-                .menu-item {
-                    display: flex;
-                    align-items: center;
-                    gap: 0.3rem;
-                    text-decoration: none;
-                    color: #fff;
-                    font-size: var(--fz-sm);
-                    border-radius: 7px;
-                    padding: 0.5rem;
-                    cursor: pointer;
-
-                    &:hover {
-                        background-color: rgba(255, 255, 255, 0.2);
-                    }
+                li {
+                    list-style: none;
                 }
             }
         }
@@ -437,19 +421,9 @@
         }
 
         .profile-menu {
-            position: absolute;
             top: calc(100% + var(--fz-xs));
             right: 0;
             width: 240px;
-            padding: 0.5rem;
-            border-radius: var(--fz-xs);
-            background-color: rgba(20, 20, 20, 0.85);
-            backdrop-filter: blur(var(--fz-md));
-            -webkit-backdrop-filter: blur(var(--fz-md));
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
-            animation: fadeIn 0.3s ease-in-out;
-            z-index: 10;
 
             .user-info {
                 padding: 0.75rem var(--fz-md);
@@ -479,46 +453,12 @@
                 background-color: rgba(255, 255, 255, 0.08);
             }
 
-            .profile-menu-item {
-                display: flex;
-                align-items: center;
-                gap: 0.75rem;
-                font-size: var(--fz-sm);
-                font-weight: 500;
-                color: #d1d1d1;
-                padding: 0.75rem var(--fz-md);
-                border-radius: 8px;
-                cursor: pointer;
-                text-decoration: none;
-                border: none;
-                background: transparent;
-                width: 100%;
-                transition: all 0.2s ease;
+            .logout-btn:hover {
+                background-color: rgba(255, 59, 48, 0.1);
+                color: var(--red);
 
                 svg {
-                    font-size: var(--fz-sm);
-                    color: #a0a0a0;
-                    transition: color 0.2s ease;
-                }
-
-                &:hover {
-                    background-color: rgba(255, 255, 255, 0.08);
-                    color: #ffffff;
-
-                    svg {
-                        color: #ffffff;
-                    }
-                }
-            }
-
-            .logout-btn {
-                &:hover {
-                    background-color: rgba(255, 59, 48, 0.1);
                     color: var(--red);
-
-                    svg {
-                        color: var(--red);
-                    }
                 }
             }
         }
@@ -571,6 +511,61 @@
             &:not(:disabled):hover {
                 background: rgb(255 255 255 / 0.3);
                 transform: scale(1.02);
+            }
+        }
+    }
+
+    /* common styles */
+    .glass-popover {
+        position: absolute;
+        padding: 0.5rem;
+        border-radius: var(--fz-xs);
+        background-color: rgba(20, 20, 20, 0.85);
+        backdrop-filter: blur(var(--fz-md));
+        -webkit-backdrop-filter: blur(var(--fz-md));
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+        z-index: 10;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-10px);
+        transition: all 0.3s ease-in-out;
+
+        &.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .glass-popover-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: var(--fz-sm);
+            font-weight: 500;
+            color: #d1d1d1;
+            padding: 0.75rem var(--fz-md);
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            border: none;
+            background: transparent;
+            width: 100%;
+            transition: all 0.2s ease;
+
+            svg {
+                font-size: var(--fz-sm);
+                color: #a0a0a0;
+                transition: color 0.2s ease;
+            }
+
+            &:hover {
+                background-color: rgba(255, 255, 255, 0.08);
+                color: #ffffff;
+
+                svg {
+                    color: #ffffff;
+                }
             }
         }
     }
