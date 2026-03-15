@@ -2,7 +2,7 @@ import { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { debounce } from 'lodash';
-import { FaSearch, FaMagic } from 'react-icons/fa';
+import { FaSearch, FaMagic, FaBolt } from 'react-icons/fa';
 import { MdMovie } from 'react-icons/md';
 import useToast from '../../hooks/useToast';
 import SuggestionsDropdown from './SuggestionsDropdown';
@@ -122,11 +122,17 @@ const SearchBar = ({ user }) => {
                     >
                         {isAiMode ? (
                             <>
-                                <MdMovie style={{ fontSize: '16px' }} /> Standard Search
+                                <MdMovie />
+                                <span className="toggle-text">
+                                    Standard<span className="hide-on-mobile"> Search</span>
+                                </span>
                             </>
                         ) : (
                             <>
-                                <FaMagic style={{ fontSize: '14px' }} /> Try AI Search
+                                <FaMagic />
+                                <span className="toggle-text">
+                                    AI<span className="hide-on-mobile"> Search</span>
+                                </span>
                             </>
                         )}
                     </button>
@@ -135,7 +141,11 @@ const SearchBar = ({ user }) => {
                         type="text"
                         value={inputValue}
                         placeholder={
-                            isAiMode ? "Search by mood, theme, or genre..." : 'Search for movies or TV shows...'
+                            isAiMode
+                                ? showQuickSuggestBtn
+                                    ? 'Type mood, or tap Suggest...'
+                                    : 'Search by mood, theme...'
+                                : 'Search for movies or TV shows...'
                         }
                         onChange={handleInputChange}
                         onKeyDown={handleKeyDown}
@@ -158,7 +168,19 @@ const SearchBar = ({ user }) => {
                         type="button"
                         onClick={isAiMode ? handleAiSuggest : handleStandardSearch}
                     >
-                        {isAiMode ? showQuickSuggestBtn ? 'Quick Suggestion' : 'Suggest' : <FaSearch />}
+                        {isAiMode ? (
+                            showQuickSuggestBtn ? (
+                                <>
+                                    <FaBolt />
+                                    <span className="hide-on-mobile">Quick </span>
+                                    Suggest
+                                </>
+                            ) : (
+                                'Suggest'
+                            )
+                        ) : (
+                            <FaSearch />
+                        )}
                     </button>
                 </div>
             </div>
