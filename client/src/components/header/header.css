@@ -50,6 +50,7 @@
         .menu.visible {
             padding: 1rem;
             height: 110px;
+            z-index: 3;
         }
 
         .menu {
