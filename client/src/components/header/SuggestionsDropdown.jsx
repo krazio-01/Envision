@@ -1,10 +1,21 @@
-import { memo } from 'react';
+import { memo, useMemo } from 'react';
 import MediaItem from '../content/mediaItem/MediaItem';
 import { IoMdClose } from 'react-icons/io';
 import { MdAutoAwesome, MdInsights } from 'react-icons/md';
 import { FaExclamation } from 'react-icons/fa';
 
 const SuggestionsDropdown = ({ mode, show, suggestions, isLoading, user, onClose, onViewAll, setShowSuggestion }) => {
+    const displaySuggestions = useMemo(() => {
+        if (!suggestions?.length) return [];
+
+        if (mode === 'ai') {
+            const limit = window.innerWidth <= 600 ? 3 : 4;
+            return suggestions.slice(0, limit);
+        }
+
+        return suggestions.slice(0, 5);
+    }, [suggestions, mode]);
+
     if (!show) return null;
 
     if (mode === 'ai') {
@@ -14,7 +25,13 @@ const SuggestionsDropdown = ({ mode, show, suggestions, isLoading, user, onClose
                     <h4>
                         <MdInsights /> AI Recommendations
                     </h4>
-                    <button disabled={isLoading} className="close-btn" onClick={onClose} type="button">
+                    <button
+                        disabled={isLoading}
+                        className="close-btn"
+                        onClick={onClose}
+                        type="button"
+                        aria-label="Close AI Recommendations"
+                    >
                         <IoMdClose />
                     </button>
                 </div>
@@ -29,8 +46,8 @@ const SuggestionsDropdown = ({ mode, show, suggestions, isLoading, user, onClose
                     <div className="loading-state">Binge-watching the entire internet to find your match...</div>
                 ) : (
                     <div className="results">
-                        {suggestions?.length > 0 ? (
-                            suggestions.map((item, index) => (
+                        {displaySuggestions.length > 0 ? (
+                            displaySuggestions.map((item, index) => (
                                 <div key={item.id || index}>
                                     <MediaItem suggestion={item} setShowSuggestion={setShowSuggestion} />
                                     {item.reason && (
@@ -50,12 +67,12 @@ const SuggestionsDropdown = ({ mode, show, suggestions, isLoading, user, onClose
         );
     }
 
-    if (!suggestions || suggestions.length === 0) return null;
+    if (!displaySuggestions.length) return null;
 
     return (
         <div className="search_suggest show">
             <div className="body">
-                {suggestions.slice(0, 5).map((suggestion, index) => (
+                {displaySuggestions.map((suggestion, index) => (
                     <MediaItem
                         key={suggestion.id || index}
                         suggestion={suggestion}
