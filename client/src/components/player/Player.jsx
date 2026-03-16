@@ -179,7 +179,7 @@ const Player = ({ media }) => {
 
     const iframeSrc = useMemo(
         () =>
-            `https://vidsrcme.su/embed/${mediaType}/${id}${mediaType === 'tv' ? `/${playback.season}/${playback.episode}` : ''}`,
+            `https://vidsrcme.su/embed/${mediaType}/${id}${mediaType === 'tv' ? `/${playback.season}/${playback.episode}` : ''}?autoplay=1`,
         [mediaType, id, playback.season, playback.episode],
     );
 
@@ -264,7 +264,12 @@ const Player = ({ media }) => {
                         {!ui.iframeVisible ? (
                             <div
                                 className="btn-play"
-                                onClick={() => updateUi({ iframeLoading: true, iframeVisible: true })}
+                                onClick={() => {
+                                    updateUi({ iframeLoading: true, iframeVisible: true });
+                                    setTimeout(() => {
+                                        setUi((prev) => ({ ...prev, iframeLoading: false }));
+                                    }, 2000);
+                                }}
                             >
                                 <IoPlayOutline />
                             </div>
