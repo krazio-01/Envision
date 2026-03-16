@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { generateImageUrl } from '../../utils/movieUtils';
 import dayjs from 'dayjs';
@@ -27,11 +27,81 @@ const Player = ({ media }) => {
     const [iframeVisible, setIframeVisible] = useState(false);
     const [iframeLoading, setIframeLoading] = useState(false);
 
+    const sessionStartTime = useRef(null);
+    const totalWatchTimeMs = useRef(0);
+    const hasSentData = useRef(false);
+    const currentMediaRef = useRef({ id, mediaType });
+
+    useEffect(() => {
+        currentMediaRef.current = { id, mediaType };
+    }, [id, mediaType]);
+
+    const evaluateAndSendProgress = useCallback(async () => {
+        if (hasSentData.current) return;
+
+        let finalTimeMs = totalWatchTimeMs.current;
+        if (sessionStartTime.current) finalTimeMs += Date.now() - sessionStartTime.current;
+
+        const timeSpentMinutes = finalTimeMs / 1000 / 60;
+
+        if (timeSpentMinutes < 3) return;
+
+        hasSentData.current = true;
+
+        const { id: currentId, mediaType: currentMediaType } = currentMediaRef.current;
+
+        const estimatedThreshold = currentMediaType === 'tv' ? 35 : 100;
+        const endpoint = timeSpentMinutes >= estimatedThreshold ? '/activity/markCompleted' : '/activity/markDropped';
+
+        try {
+            await axios.post(endpoint, {
+                mediaId: currentId,
+                mediaType: currentMediaType,
+            }, { withCredentials: true });
+        } catch (err) {
+            console.error('Failed to save progress', err);
+        }
+    }, []);
+
     useEffect(() => {
         setIframeVisible(false);
         setIframeLoading(false);
         setShowMenu(false);
-    }, [id]);
+    }, [id, currentSeason, currentEpisode]);
+
+    useEffect(() => {
+        if (iframeVisible) {
+            sessionStartTime.current = Date.now();
+            totalWatchTimeMs.current = 0;
+            hasSentData.current = false;
+        } else sessionStartTime.current = null;
+    }, [iframeVisible]);
+
+    useEffect(() => {
+        const handleVisibilityChange = () => {
+            if (document.hidden) {
+                if (sessionStartTime.current) {
+                    totalWatchTimeMs.current += Date.now() - sessionStartTime.current;
+                    sessionStartTime.current = null;
+                }
+            } else {
+                if (iframeVisible) sessionStartTime.current = Date.now();
+            }
+        };
+
+        document.addEventListener('visibilitychange', handleVisibilityChange);
+        return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+    }, [iframeVisible]);
+
+    useEffect(() => {
+        const handleBeforeUnload = () => evaluateAndSendProgress();
+        window.addEventListener('beforeunload', handleBeforeUnload);
+
+        return () => {
+            window.removeEventListener('beforeunload', handleBeforeUnload);
+            evaluateAndSendProgress();
+        };
+    }, [id, currentSeason, currentEpisode, evaluateAndSendProgress]);
 
     useEffect(() => {
         let isMounted = true;
