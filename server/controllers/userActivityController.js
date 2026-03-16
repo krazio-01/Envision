@@ -94,7 +94,7 @@ const markAsCompleted = async (req, res) => {
             { upsert: true },
         );
 
-        res.status(200).json({ message: 'Marked as completed' });
+        res.status(200).json({ success: true });
     } catch (error) {
         res.status(500).json({ message: 'Internal server error' });
     }
@@ -131,7 +131,7 @@ const markAsDropped = async (req, res) => {
             { upsert: true },
         );
 
-        res.status(200).json({ message: 'Marked as dropped' });
+        res.status(200).json({ success: true });
     } catch (error) {
         res.status(500).json({ message: 'Internal server error' });
     }
