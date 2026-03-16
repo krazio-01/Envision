@@ -1,31 +1,36 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { generateImageUrl } from '../../utils/movieUtils';
-import dayjs from 'dayjs';
 import axios from 'axios';
-import BookmarkBtn from '../Ui/bookmarkBtn/BookmarkBtn';
+import dayjs from 'dayjs';
 import { IoPlayOutline, IoSettingsOutline } from 'react-icons/io5';
 import { PuffLoader } from 'react-spinners';
+import { generateImageUrl } from '../../utils/movieUtils';
+import BookmarkBtn from '../Ui/bookmarkBtn/BookmarkBtn';
 import './player.css';
 
 const Player = ({ media }) => {
     const { mediaType, id } = useParams();
     const navigate = useNavigate();
 
-    const [currentSeason, setCurrentSeason] = useState(
-        () => Number((sessionStorage.getItem(`currentSeason_${id}`) || '').match(/\d+/)) || 1,
-    );
-    const [currentEpisode, setCurrentEpisode] = useState(
-        () => Number((sessionStorage.getItem(`currentEpisode_${id}`) || '').match(/\d+/)) || 1,
-    );
+    const [playback, setPlayback] = useState(() => ({
+        season: Number((sessionStorage.getItem(`currentSeason_${id}`) || '').match(/\d+/)) || 1,
+        episode: Number((sessionStorage.getItem(`currentEpisode_${id}`) || '').match(/\d+/)) || 1,
+    }));
+    const [mediaData, setMediaData] = useState({
+        data: null,
+        episodeGroupExists: false,
+        numberOfSeasons: 0,
+        loading: false,
+    });
+    const [ui, setUi] = useState({
+        showMenu: false,
+        iframeVisible: false,
+        iframeLoading: false,
+    });
 
-    const [data, setData] = useState(null);
-    const [showMenu, setShowMenu] = useState(false);
-    const [episodeGroupExists, setEpisodeGroupExists] = useState(false);
-    const [numberOfSeasons, setNumberOfSeasons] = useState(0);
-    const [loading, setLoading] = useState(false);
-    const [iframeVisible, setIframeVisible] = useState(false);
-    const [iframeLoading, setIframeLoading] = useState(false);
+    const updatePlayback = useCallback((updates) => setPlayback((prev) => ({ ...prev, ...updates })), []);
+    const updateMediaData = useCallback((updates) => setMediaData((prev) => ({ ...prev, ...updates })), []);
+    const updateUi = useCallback((updates) => setUi((prev) => ({ ...prev, ...updates })), []);
 
     const sessionStartTime = useRef(null);
     const totalWatchTimeMs = useRef(0);
@@ -43,55 +48,50 @@ const Player = ({ media }) => {
         if (sessionStartTime.current) finalTimeMs += Date.now() - sessionStartTime.current;
 
         const timeSpentMinutes = finalTimeMs / 1000 / 60;
-
         if (timeSpentMinutes < 3) return;
 
         hasSentData.current = true;
-
         const { id: currentId, mediaType: currentMediaType } = currentMediaRef.current;
-
         const estimatedThreshold = currentMediaType === 'tv' ? 35 : 100;
         const endpoint = timeSpentMinutes >= estimatedThreshold ? '/activity/markCompleted' : '/activity/markDropped';
 
         try {
-            await axios.post(endpoint, {
-                mediaId: currentId,
-                mediaType: currentMediaType,
-            }, { withCredentials: true });
+            await axios.post(
+                endpoint,
+                {
+                    mediaId: currentId,
+                    mediaType: currentMediaType,
+                },
+                { withCredentials: true },
+            );
         } catch (err) {
             console.error('Failed to save progress', err);
         }
     }, []);
 
     useEffect(() => {
-        setIframeVisible(false);
-        setIframeLoading(false);
-        setShowMenu(false);
-    }, [id, currentSeason, currentEpisode]);
+        updateUi({ iframeVisible: false, iframeLoading: false, showMenu: false });
+    }, [id, playback.season, playback.episode, updateUi]);
 
     useEffect(() => {
-        if (iframeVisible) {
+        if (ui.iframeVisible) {
             sessionStartTime.current = Date.now();
             totalWatchTimeMs.current = 0;
             hasSentData.current = false;
         } else sessionStartTime.current = null;
-    }, [iframeVisible]);
+    }, [ui.iframeVisible]);
 
     useEffect(() => {
         const handleVisibilityChange = () => {
-            if (document.hidden) {
-                if (sessionStartTime.current) {
-                    totalWatchTimeMs.current += Date.now() - sessionStartTime.current;
-                    sessionStartTime.current = null;
-                }
-            } else {
-                if (iframeVisible) sessionStartTime.current = Date.now();
-            }
+            if (document.hidden && sessionStartTime.current) {
+                totalWatchTimeMs.current += Date.now() - sessionStartTime.current;
+                sessionStartTime.current = null;
+            } else if (!document.hidden && ui.iframeVisible) sessionStartTime.current = Date.now();
         };
 
         document.addEventListener('visibilitychange', handleVisibilityChange);
         return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
-    }, [iframeVisible]);
+    }, [ui.iframeVisible]);
 
     useEffect(() => {
         const handleBeforeUnload = () => evaluateAndSendProgress();
@@ -101,124 +101,123 @@ const Player = ({ media }) => {
             window.removeEventListener('beforeunload', handleBeforeUnload);
             evaluateAndSendProgress();
         };
-    }, [id, currentSeason, currentEpisode, evaluateAndSendProgress]);
+    }, [id, playback.season, playback.episode, evaluateAndSendProgress]);
 
     useEffect(() => {
-        let isMounted = true;
+        if (mediaType !== 'tv') return;
+        const abortController = new AbortController();
 
         const fetchEpisodeGroups = async () => {
-            if (mediaType !== 'tv') return;
-
             try {
-                setLoading(true);
-                const response = await axios.get(`/${mediaType}/episode_groups?id=${id}`);
+                updateMediaData({ loading: true });
+                const response = await axios.get(`/${mediaType}/episode_groups?id=${id}`, {
+                    signal: abortController.signal,
+                });
 
-                if (!response.data.results || response.data.results.length === 0) {
-                    if (isMounted) setLoading(false);
+                if (!response.data.results?.length) {
+                    updateMediaData({ loading: false });
                     return;
                 }
 
                 const pick = response.data.results.reduce(
-                    (prevItem, currentItem) =>
-                        currentItem.group_count >= prevItem.group_count &&
-                            currentItem.episode_count > prevItem.episode_count
-                            ? currentItem
-                            : prevItem,
+                    (prev, current) =>
+                        current.group_count >= prev.group_count && current.episode_count > prev.episode_count
+                            ? current
+                            : prev,
                     response.data.results[0],
                 );
 
-                const groupInfo = await axios.get(`/${mediaType}/group_info?groupId=${pick.id}`);
+                const groupInfo = await axios.get(`/${mediaType}/group_info?groupId=${pick.id}`, {
+                    signal: abortController.signal,
+                });
 
-                if (isMounted) {
-                    setNumberOfSeasons(groupInfo.data.group_count);
-                    setData(groupInfo.data);
-                    setEpisodeGroupExists(true);
-                    setLoading(false);
-                }
+                updateMediaData({
+                    numberOfSeasons: groupInfo.data.group_count,
+                    data: groupInfo.data,
+                    episodeGroupExists: true,
+                    loading: false,
+                });
             } catch (error) {
-                console.error('Error fetching data from the backend:', error.message);
-                if (isMounted) setLoading(false);
+                if (!axios.isCancel(error)) {
+                    console.error('Error fetching episode groups:', error.message);
+                    updateMediaData({ loading: false });
+                }
             }
         };
 
         fetchEpisodeGroups();
-
-        return () => {
-            isMounted = false;
-        };
-    }, [mediaType, id]);
+        return () => abortController.abort();
+    }, [mediaType, id, updateMediaData]);
 
     useEffect(() => {
-        sessionStorage.setItem(`currentSeason_${id}`, currentSeason);
-        sessionStorage.setItem(`currentEpisode_${id}`, currentEpisode);
-    }, [currentSeason, currentEpisode, id]);
+        sessionStorage.setItem(`currentSeason_${id}`, playback.season);
+        sessionStorage.setItem(`currentEpisode_${id}`, playback.episode);
+    }, [playback.season, playback.episode, id]);
 
     useEffect(() => {
-        let isMounted = true;
+        if (mediaData.episodeGroupExists || mediaType !== 'tv') return;
+        const abortController = new AbortController();
 
         const fetchSeasonDetails = async () => {
-            if (episodeGroupExists || mediaType !== 'tv') return;
-
             try {
-                setLoading(true);
-                const response = await axios.get(`/${mediaType}/season_details?id=${id}&seasonNo=${currentSeason}`);
-                if (isMounted) {
-                    setData(response.data);
-                    setLoading(false);
-                }
+                updateMediaData({ loading: true });
+                const response = await axios.get(`/${mediaType}/season_details?id=${id}&seasonNo=${playback.season}`, {
+                    signal: abortController.signal,
+                });
+                updateMediaData({ data: response.data, loading: false });
             } catch (error) {
-                console.error('Error fetching data from the backend:', error.message);
-                if (isMounted) setLoading(false);
+                if (!axios.isCancel(error)) {
+                    console.error('Error fetching season details:', error.message);
+                    updateMediaData({ loading: false });
+                }
             }
         };
 
         fetchSeasonDetails();
-
-        return () => {
-            isMounted = false;
-        };
-    }, [currentSeason, episodeGroupExists, mediaType, id]);
+        return () => abortController.abort();
+    }, [playback.season, mediaData.episodeGroupExists, mediaType, id, updateMediaData]);
 
     const iframeSrc = useMemo(
         () =>
-            `https://vidsrcme.su/embed/${mediaType}/${id}${mediaType === 'tv' ? `/${currentSeason}/${currentEpisode}` : ''}`,
-        [mediaType, id, currentSeason, currentEpisode],
+            `https://vidsrcme.su/embed/${mediaType}/${id}${mediaType === 'tv' ? `/${playback.season}/${playback.episode}` : ''}`,
+        [mediaType, id, playback.season, playback.episode],
     );
 
-    const filteredSeasons = useMemo(
-        () =>
-            media?.seasons?.filter((season) => {
-                const airDate = dayjs(season.air_date);
-                return (!airDate.isAfter(dayjs()) && season.season_number !== 0) || airDate === null;
-            }),
-        [media?.seasons],
-    );
+    const filteredSeasons = useMemo(() => {
+        return media?.seasons?.filter((season) => {
+            const airDate = dayjs(season.air_date);
+            return (!airDate.isAfter(dayjs()) && season.season_number !== 0) || !season.air_date;
+        });
+    }, [media?.seasons]);
 
     const handleEpSelect = useCallback(
         (season, episodeIndex) => {
             const selectedEpisode = episodeIndex + 1;
-            setCurrentEpisode(selectedEpisode);
+            updatePlayback({ episode: selectedEpisode });
             navigate(`/${mediaType}/${media?.name || media?.title}/${id}/${season}/${selectedEpisode}`);
         },
-        [navigate, mediaType, media?.name, media?.title, id],
+        [navigate, mediaType, media?.name, media?.title, id, updatePlayback],
     );
 
-    const handleSeasonSelect = useCallback((seasonNum) => {
-        setShowMenu(false);
-        setCurrentSeason(seasonNum);
-    }, []);
+    const handleSeasonSelect = useCallback(
+        (seasonNum) => {
+            updateUi({ showMenu: false });
+            updatePlayback({ season: seasonNum, episode: 1 });
+            navigate(`/${mediaType}/${media?.name || media?.title}/${id}/${seasonNum}/1`);
+        },
+        [navigate, mediaType, media?.name, media?.title, id, updateUi, updatePlayback],
+    );
 
-    const renderSeasonItems = () => {
-        const seasons = episodeGroupExists
-            ? Array.from({ length: numberOfSeasons || 0 }, (_, index) => index + 1)
-            : filteredSeasons?.map((season) => season.season_number) || [];
+    const renderedSeasonItems = useMemo(() => {
+        const seasons = mediaData.episodeGroupExists
+            ? Array.from({ length: mediaData.numberOfSeasons || 0 }, (_, i) => i + 1)
+            : filteredSeasons?.map((s) => s.season_number) || [];
 
         return seasons.map((seasonNum, index) => (
             <button
                 key={index}
                 type="button"
-                className={`dropdown-item ${currentSeason === seasonNum ? 'active' : ''}`}
-                data-comment-id={`envision_${index}`}
+                className={`dropdown-item ${playback.season === seasonNum ? 'active' : ''}`}
                 data-season={seasonNum}
                 onClick={() => handleSeasonSelect(seasonNum)}
                 style={{ textAlign: 'left' }}
@@ -226,25 +225,27 @@ const Player = ({ media }) => {
                 Season {seasonNum}
             </button>
         ));
-    };
+    }, [mediaData.episodeGroupExists, mediaData.numberOfSeasons, filteredSeasons, playback.season, handleSeasonSelect]);
 
-    const renderEpisodes = () => {
-        const episodes = episodeGroupExists ? data?.groups[currentSeason - 1]?.episodes : data?.episodes;
+    const renderedEpisodes = useMemo(() => {
+        const episodes = mediaData.episodeGroupExists
+            ? mediaData.data?.groups?.[playback.season - 1]?.episodes
+            : mediaData.data?.episodes;
 
         return episodes?.map((episode, episodeIndex) => (
             <div
                 key={episodeIndex + 1}
                 className="episode"
-                onClick={() => handleEpSelect(currentSeason, episodeIndex)}
+                onClick={() => handleEpSelect(playback.season, episodeIndex)}
                 style={{ cursor: 'pointer' }}
             >
-                <div className={`${currentEpisode === episodeIndex + 1 ? 'active' : ''}`}>
+                <div className={`${playback.episode === episodeIndex + 1 ? 'active' : ''}`}>
                     <span className="episode-num">Episode {episodeIndex + 1}</span>
                     <span className="episode-name">{episode.name}</span>
                 </div>
             </div>
         ));
-    };
+    }, [mediaData.episodeGroupExists, mediaData.data, playback.season, playback.episode, handleEpSelect]);
 
     return (
         <>
@@ -252,23 +253,18 @@ const Player = ({ media }) => {
                 <div className="movie-player-wrap">
                     <div
                         className="player-bg"
-                        style={{
-                            backgroundImage: `url(${generateImageUrl(media?.backdrop_path)})`,
-                        }}
+                        style={{ backgroundImage: `url(${generateImageUrl(media?.backdrop_path)})` }}
                     />
                     <div className="player">
-                        {iframeLoading && (
+                        {ui.iframeLoading && (
                             <div className="loader">
                                 <PuffLoader color="#EA2027" size={50} />
                             </div>
                         )}
-                        {!iframeVisible ? (
+                        {!ui.iframeVisible ? (
                             <div
                                 className="btn-play"
-                                onClick={() => {
-                                    setIframeLoading(true);
-                                    setIframeVisible(true);
-                                }}
+                                onClick={() => updateUi({ iframeLoading: true, iframeVisible: true })}
                             >
                                 <IoPlayOutline />
                             </div>
@@ -276,13 +272,8 @@ const Player = ({ media }) => {
                             <iframe
                                 src={iframeSrc}
                                 allow="autoplay; fullscreen"
-                                style={{
-                                    width: '100%',
-                                    height: '100%',
-                                    overflow: 'hidden',
-                                    border: 'none',
-                                }}
-                                onLoad={() => setIframeLoading(false)}
+                                style={{ width: '100%', height: '100%', overflow: 'hidden', border: 'none' }}
+                                onLoad={() => updateUi({ iframeLoading: false })}
                                 title="Video Player"
                             />
                         )}
@@ -313,35 +304,32 @@ const Player = ({ media }) => {
                 </div>
                 {mediaType === 'tv' ? (
                     <div className="series-data">
-                        {!loading ? (
+                        {!mediaData.loading ? (
                             <>
                                 <div className="season">
                                     <div className="dropdown">
                                         <button
                                             className="btn dropdown-toggle"
-                                            onClick={() => setShowMenu((prev) => !prev)}
+                                            onClick={() => updateUi({ showMenu: !ui.showMenu })}
                                         >
-                                            {`Season ${currentSeason}`}
+                                            {`Season ${playback.season}`}
                                         </button>
                                         <div
                                             className="dropdown-menu"
-                                            style={{
-                                                display: showMenu ? 'block' : 'none',
-                                            }}
+                                            style={{ display: ui.showMenu ? 'block' : 'none' }}
                                         >
-                                            {renderSeasonItems()}
+                                            {renderedSeasonItems}
                                         </div>
                                     </div>
                                 </div>
-                                <div className="season-episodes">{renderEpisodes()}</div>
+                                <div className="season-episodes">{renderedEpisodes}</div>
                             </>
                         ) : (
                             <PuffLoader
                                 color="#EA2027"
-                                loading={loading}
+                                loading={mediaData.loading}
                                 size={55}
                                 aria-label="Loading Spinner"
-                                data-testid="loader"
                             />
                         )}
                     </div>
