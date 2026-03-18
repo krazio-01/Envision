@@ -1,30 +1,30 @@
-import { useEffect, useState } from "react";
-import { useSearchParams, Link } from "react-router-dom";
-import axios from "axios";
-import "../auth.css";
+import { useEffect, useState } from 'react';
+import { useSearchParams, Link } from 'react-router-dom';
+import apiClient from '../../../api/apiClient';
+import '../auth.css';
 
-const verifyEmail = () => {
-    const [verified, setVerified] = useState("");
-    const [error, setError] = useState("");
+const VerifyEmail = () => {
+    const [verified, setVerified] = useState('');
+    const [error, setError] = useState('');
 
     const [searchParams] = useSearchParams();
-    const token = searchParams.get("token");
+    const token = searchParams.get('token');
 
     useEffect(() => {
         const verifyUserEmail = async () => {
             try {
-                const { data } = await axios.post("/auth/verifyEmail", {
-                    token: token ? token : "",
+                const { data } = await apiClient.post('/auth/verifyEmail', {
+                    token: token ? token : '',
                 });
                 setVerified(data.message);
             } catch (error) {
-                setVerified("");
+                setVerified('');
                 setError(error.response?.data?.message);
             }
         };
 
         if (token?.length > 0) verifyUserEmail();
-    }, []);
+    }, [token]);
 
     return (
         <div className="verify-email-main">
@@ -43,4 +43,4 @@ const verifyEmail = () => {
     );
 };
 
-export default verifyEmail;
+export default VerifyEmail;

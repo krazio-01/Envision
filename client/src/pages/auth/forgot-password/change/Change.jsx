@@ -1,39 +1,39 @@
-import { useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import useToast from "../../../../hooks/useToast";
-import axios from "axios";
-import "../../auth.css";
+import { useState } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import useToast from '../../../../hooks/useToast';
+import apiClient from '../../../../api/apiClient';
+import '../../auth.css';
 
 const Change = () => {
     const [loading, setLoading] = useState(false);
     const [formState, setFormState] = useState({
-        password: "",
-        confirmPassword: "",
+        password: '',
+        confirmPassword: '',
     });
 
     const toast = useToast();
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
-    const token = searchParams.get("token");
+    const token = searchParams.get('token');
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         if (formState.password !== formState.confirmPassword) {
-            toast("error", "Passwords do not match");
+            toast('error', 'Passwords do not match');
             return;
         }
 
         try {
             setLoading(true);
-            const { data } = await axios.post("/auth/forgot-password/change", {
+            const { data } = await apiClient.post('/auth/forgot-password/change', {
                 newPassword: formState.password,
                 token,
             });
-            toast("success", data?.message);
-            navigate("/");
+            toast('success', data?.message);
+            navigate('/');
         } catch (error) {
-            toast("error", error.response?.data?.message);
+            toast('error', error.response?.data?.message);
         } finally {
             setLoading(false);
         }
@@ -60,18 +60,12 @@ const Change = () => {
                         type="password"
                         id="confirmPassword"
                         value={formState.confirmPassword}
-                        onChange={(e) =>
-                            setFormState({ ...formState, confirmPassword: e.target.value })
-                        }
+                        onChange={(e) => setFormState({ ...formState, confirmPassword: e.target.value })}
                         required
                     />
                 </div>
-                <button
-                    disabled={loading}
-                    className={`auth-btn ${loading && "loading"}`}
-                    type="submit"
-                >
-                    {loading ? "Updating..." : "Change"}
+                <button disabled={loading} className={`auth-btn ${loading && 'loading'}`} type="submit">
+                    {loading ? 'Updating...' : 'Change'}
                 </button>
             </form>
         </div>

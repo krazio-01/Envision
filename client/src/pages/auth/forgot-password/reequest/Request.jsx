@@ -1,12 +1,12 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
-import useToast from "../../../../hooks/useToast";
-import axios from "axios";
-import "../../auth.css";
+import { useState } from 'react';
+import { Link } from 'react-router-dom';
+import useToast from '../../../../hooks/useToast';
+import apiClient from '../../../../api/apiClient';
+import '../../auth.css';
 
 const Request = () => {
     const [loading, setLoading] = useState(false);
-    const [email, setEmail] = useState("");
+    const [email, setEmail] = useState('');
 
     const toast = useToast();
 
@@ -15,10 +15,10 @@ const Request = () => {
 
         try {
             setLoading(true);
-            const { data } = await axios.post("/auth/forgot-password/request", { email });
-            toast("custom", data.message, { duration: Infinity });
+            const { data } = await apiClient.post('/auth/forgot-password/request', { email });
+            toast('custom', data.message, { duration: Infinity });
         } catch (error) {
-            toast("error", error.response?.data?.message);
+            toast('error', error.response?.data?.message);
         } finally {
             setLoading(false);
         }
@@ -26,25 +26,16 @@ const Request = () => {
 
     return (
         <div className="auth-form-container">
-            <h1>Requeest for change</h1>
+            <h1>Request for change</h1>
 
             <form onSubmit={handleSubmit}>
                 <div className="input-group">
                     <label htmlFor="email">Please enter your email</label>
-                    <input
-                        type="email"
-                        id="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        required
-                    />
+                    <input type="email" id="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
                 </div>
-                <button
-                    disabled={loading}
-                    className={`auth-btn ${loading && "loading"}`}
-                    type="submit"
-                >
-                    {loading ? "Submitting..." : "Submit"}
+
+                <button disabled={loading} className={`auth-btn ${loading && 'loading'}`} type="submit">
+                    {loading ? 'Submitting...' : 'Submit'}
                 </button>
             </form>
 

@@ -1,15 +1,15 @@
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import useToast from "../../../hooks/useToast";
-import axios from "axios";
-import useUserStore from "../../../store/store";
-import "../auth.css";
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import useToast from '../../../hooks/useToast';
+import apiClient from '../../../api/apiClient';
+import useUserStore from '../../../store/store';
+import '../auth.css';
 
 const Login = () => {
     const [loading, setLoading] = useState(false);
     const [formState, setFormState] = useState({
-        email: "",
-        password: "",
+        email: '',
+        password: '',
     });
 
     const toast = useToast();
@@ -21,12 +21,13 @@ const Login = () => {
 
         try {
             setLoading(true);
-            const { data } = await axios.post("/auth/signin", formState, { withCredentials: true });
+            const { data } = await apiClient.post('/auth/signin', formState);
+
             setUser(data.user);
-            toast("success", data?.message);
-            navigate("/");
+            toast('success', data?.message);
+            navigate('/');
         } catch (error) {
-            toast("error", error.response?.data?.message);
+            toast('error', error.response?.data?.message);
         } finally {
             setLoading(false);
         }
@@ -62,12 +63,8 @@ const Login = () => {
                     <Link to="/forgot-password/request">Forgot password?</Link>
                 </div>
 
-                <button
-                    disabled={loading}
-                    className={`auth-btn ${loading && "loading"}`}
-                    type="submit"
-                >
-                    {loading ? "Signing in..." : "Sign in"}
+                <button disabled={loading} className={`auth-btn ${loading && 'loading'}`} type="submit">
+                    {loading ? 'Signing in...' : 'Sign in'}
                 </button>
             </form>
 

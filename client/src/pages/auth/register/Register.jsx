@@ -1,15 +1,15 @@
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import useToast from "../../../hooks/useToast";
-import axios from "axios";
-import "../auth.css";
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import useToast from '../../../hooks/useToast';
+import apiClient from '../../../api/apiClient';
+import '../auth.css';
 
 const Register = () => {
     const [loading, setLoading] = useState(false);
     const [formState, setFormState] = useState({
-        name: "",
-        email: "",
-        password: "",
+        name: '',
+        email: '',
+        password: '',
     });
 
     const toast = useToast();
@@ -20,12 +20,12 @@ const Register = () => {
 
         try {
             setLoading(true);
-            const { data } = await axios.post("/auth/signup", formState);
-            toast("success", data?.message);
-            navigate("/login");
+            const { data } = await apiClient.post('/auth/signup', formState);
+            toast('success', data?.message);
+            navigate('/login');
         } catch (error) {
             console.log(error);
-            toast("error", error.response?.data?.message);
+            toast('error', error.response?.data?.message);
         } finally {
             setLoading(false);
         }
@@ -67,12 +67,8 @@ const Register = () => {
                     />
                 </div>
 
-                <button
-                    disabled={loading}
-                    className={`auth-btn ${loading && "loading"}`}
-                    type="submit"
-                >
-                    {loading ? "Signing up..." : "Sign up"}
+                <button disabled={loading} className={`auth-btn ${loading && 'loading'}`} type="submit">
+                    {loading ? 'Signing up...' : 'Sign up'}
                 </button>
             </form>
 
