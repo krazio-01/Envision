@@ -1,18 +1,18 @@
-import { useState, useEffect, useCallback } from "react";
-import { Link } from "react-router-dom";
-import { generateImageUrl } from "../../../utils/movieUtils";
-import axios from "axios";
-import { Swiper, SwiperSlide } from "swiper/react";
-import BookmarkBtn from "../../../components/Ui/bookmarkBtn/BookmarkBtn";
-import { Autoplay, Navigation, Pagination } from "swiper/modules";
-import { BsBadgeHdFill } from "react-icons/bs";
-import { FaStopwatch, FaRegStar } from "react-icons/fa";
-import { IoPlayOutline } from "react-icons/io5";
-import SkeletonLoadingBanner from "../../../components/skeletonLoading/skLoadBanner/SkLoadingBanner";
-import "./heroBanner.css";
-import "swiper/css";
-import "swiper/css/navigation";
-import "swiper/css/pagination";
+import { useState, useEffect, useCallback } from 'react';
+import { Link } from 'react-router-dom';
+import { generateImageUrl } from '../../../utils/movieUtils';
+import apiClient from '../../../api/apiClient';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import BookmarkBtn from '../../../components/Ui/bookmarkBtn/BookmarkBtn';
+import { Autoplay, Navigation, Pagination } from 'swiper/modules';
+import { BsBadgeHdFill } from 'react-icons/bs';
+import { FaStopwatch, FaRegStar } from 'react-icons/fa';
+import { IoPlayOutline } from 'react-icons/io5';
+import SkeletonLoadingBanner from '../../../components/skeletonLoading/skLoadBanner/SkLoadingBanner';
+import './heroBanner.css';
+import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
 
 const HeroBanner = () => {
     const [loading, setLoading] = useState(true);
@@ -21,19 +21,18 @@ const HeroBanner = () => {
     useEffect(() => {
         const fetchPopularMovieDetails = async () => {
             try {
-                const { data } = await axios.get(`/movie/list?listType=popular`);
+                setLoading(true);
+                const { data } = await apiClient.get(`/movie/list?listType=popular`);
 
                 const detailsPromises = data?.results.slice(0, 7).map(async (item) => {
-                    const { data } = await axios.get(
-                        `/media/details?id=${item.id}&mediaType=movie`
-                    );
-                    return data;
+                    const response = await apiClient.get(`/media/details?id=${item.id}&mediaType=movie`);
+                    return response.data;
                 });
-                Promise.all(detailsPromises)
-                    .then((details) => setMedia(details))
-                    .catch((error) => console.error("Error fetching movie details:", error));
+
+                const details = await Promise.all(detailsPromises);
+                setMedia(details);
             } catch (error) {
-                console.error("Error fetching data:", error);
+                console.error('Error fetching hero banner data:', error);
             } finally {
                 setLoading(false);
             }
@@ -97,12 +96,8 @@ const HeroBanner = () => {
                                         <div>
                                             <Link
                                                 className="action-link"
-                                                to={`/movie/${movie.original_name || movie.title}/${
-                                                    movie.id
-                                                }/1/1`}
-                                                onClick={() =>
-                                                    window.scrollTo({ top: 0, behavior: "smooth" })
-                                                }
+                                                to={`/movie/${movie.original_name || movie.title}/${movie.id}/1/1`}
+                                                onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
                                             >
                                                 <IoPlayOutline />
                                                 <span>Play </span>
