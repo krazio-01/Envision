@@ -7,7 +7,6 @@ import {
     RouterProvider,
 } from "react-router-dom";
 import ProtectedRoute from "./utils/ProtectedRoute";
-import axios from "axios";
 import { Toaster } from "react-hot-toast";
 import Home from "./pages/home/Home";
 import Details from "./pages/details/Details";
@@ -23,8 +22,6 @@ import VerifyEmail from "./pages/auth/verifyEmail/VerifyEmail";
 import AuthLayout from "./layouts/AuthLayout";
 import RootLayout from "./layouts/RootLayout";
 import "./index.css";
-
-axios.defaults.baseURL = `${import.meta.env.VITE_APP_SERVER_URL}api`;
 
 const router = createBrowserRouter(
     createRoutesFromElements(
