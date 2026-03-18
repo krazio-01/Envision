@@ -1,14 +1,14 @@
-import { useRef, useEffect, useState } from "react";
-import { generateImageUrl } from "../../../utils/movieUtils";
-import { useParams } from "react-router-dom";
-import axios from "axios";
-import ContentWrapper from "../../../components/contentWrapper/ContentWrapper";
-import Img from "../../../components/lazyLoadImage/Img";
-import SkeletonLoadingCast from "../../../components/skeletonLoading/skeletonLoadCast/SkLoadingCast";
-import { MdArrowForwardIos, MdArrowBackIos } from "react-icons/md";
-import "./cast.css";
+import { useRef, useEffect, useState, useCallback } from 'react';
+import { generateImageUrl } from '../../../utils/movieUtils';
+import { useParams } from 'react-router-dom';
+import apiClient from '../../../api/apiClient';
+import ContentWrapper from '../../../components/contentWrapper/ContentWrapper';
+import Img from '../../../components/lazyLoadImage/Img';
+import SkeletonLoadingCast from '../../../components/skeletonLoading/skeletonLoadCast/SkLoadingCast';
+import { MdArrowForwardIos, MdArrowBackIos } from 'react-icons/md';
+import './cast.css';
 
-const Cast = ({}) => {
+const Cast = () => {
     const { mediaType, id } = useParams();
     const [cast, setCast] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -19,41 +19,34 @@ const Cast = ({}) => {
         const container = castContainer.current;
         const itemWidth = container.offsetWidth / 1.5;
 
-        const scrollAmount =
-            dir === "left" ? container.scrollLeft - itemWidth : container.scrollLeft + itemWidth;
+        const scrollAmount = dir === 'left' ? container.scrollLeft - itemWidth : container.scrollLeft + itemWidth;
 
-        container.scrollTo({ left: scrollAmount, behavior: "smooth" });
+        container.scrollTo({ left: scrollAmount, behavior: 'smooth' });
     };
 
-    const fetchCrewInfo = async () => {
+    const fetchCrewInfo = useCallback(async () => {
         try {
             setLoading(true);
-            const { data } = await axios.get(`/media/crew?id=${id}&mediaType=${mediaType}`);
+            const { data } = await apiClient.get(`/media/crew?id=${id}&mediaType=${mediaType}`);
             setCast(data.cast);
-            setLoading(false);
         } catch (error) {
-            console.error("Error fetching data from the backend:", error.message);
+            console.error('Error fetching data from the backend:', error.message);
+        } finally {
             setLoading(false);
         }
-    };
+    }, [id, mediaType]);
 
     useEffect(() => {
         fetchCrewInfo();
-    }, []);
+    }, [fetchCrewInfo]);
 
     return (
         <div className="castSection">
             <ContentWrapper>
                 <div className="sectionHeading">Top Cast</div>
 
-                <MdArrowBackIos
-                    className="castSectionLeftNav arrow"
-                    onClick={() => navigation("left")}
-                />
-                <MdArrowForwardIos
-                    className="castSectionRightNav arrow"
-                    onClick={() => navigation("right")}
-                />
+                <MdArrowBackIos className="castSectionLeftNav arrow" onClick={() => navigation('left')} />
+                <MdArrowForwardIos className="castSectionRightNav arrow" onClick={() => navigation('right')} />
 
                 {!loading ? (
                     <div className="listItems" ref={castContainer}>
@@ -61,13 +54,7 @@ const Cast = ({}) => {
                             return (
                                 <div key={item.id} className="listItem">
                                     <div className="profileImg">
-                                        <Img
-                                            src={generateImageUrl(
-                                                item.profile_path,
-                                                "original",
-                                                true
-                                            )}
-                                        />
+                                        <Img src={generateImageUrl(item.profile_path, 'original', true)} />
                                     </div>
                                     <div className="name">{item.name}</div>
                                     <div className="character">{item.character}</div>

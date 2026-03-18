@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import apiClient from '../../api/apiClient';
 import dayjs from 'dayjs';
 import { IoPlayOutline, IoSettingsOutline } from 'react-icons/io5';
 import { PuffLoader } from 'react-spinners';
@@ -56,14 +56,10 @@ const Player = ({ media }) => {
         const endpoint = timeSpentMinutes >= estimatedThreshold ? '/activity/markCompleted' : '/activity/markDropped';
 
         try {
-            await axios.post(
-                endpoint,
-                {
-                    mediaId: currentId,
-                    mediaType: currentMediaType,
-                },
-                { withCredentials: true },
-            );
+            await apiClient.post(endpoint, {
+                mediaId: currentId,
+                mediaType: currentMediaType,
+            });
         } catch (err) {
             console.error('Failed to save progress', err);
         }
@@ -110,7 +106,7 @@ const Player = ({ media }) => {
         const fetchEpisodeGroups = async () => {
             try {
                 updateMediaData({ loading: true });
-                const response = await axios.get(`/${mediaType}/episode_groups?id=${id}`, {
+                const response = await apiClient.get(`/${mediaType}/episode_groups?id=${id}`, {
                     signal: abortController.signal,
                 });
 
@@ -127,7 +123,7 @@ const Player = ({ media }) => {
                     response.data.results[0],
                 );
 
-                const groupInfo = await axios.get(`/${mediaType}/group_info?groupId=${pick.id}`, {
+                const groupInfo = await apiClient.get(`/${mediaType}/group_info?groupId=${pick.id}`, {
                     signal: abortController.signal,
                 });
 
@@ -161,9 +157,12 @@ const Player = ({ media }) => {
         const fetchSeasonDetails = async () => {
             try {
                 updateMediaData({ loading: true });
-                const response = await axios.get(`/${mediaType}/season_details?id=${id}&seasonNo=${playback.season}`, {
-                    signal: abortController.signal,
-                });
+                const response = await apiClient.get(
+                    `/${mediaType}/season_details?id=${id}&seasonNo=${playback.season}`,
+                    {
+                        signal: abortController.signal,
+                    },
+                );
                 updateMediaData({ data: response.data, loading: false });
             } catch (error) {
                 if (!axios.isCancel(error)) {

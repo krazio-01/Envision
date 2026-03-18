@@ -1,14 +1,14 @@
-import { useMemo, useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
-import { generateImageUrl } from "../../../utils/movieUtils.js";
-import dayjs from "dayjs";
-import axios from "axios";
-import ContentWrapper from "../../../components/contentWrapper/ContentWrapper";
-import Genres from "../../../components/genres/Genres";
-import Img from "../../../components/lazyLoadImage/Img.jsx";
-import Player from "../../../components/player/Player.jsx";
-import SkLoadingDetails from "../../../components/skeletonLoading/skLoadDetails/SkLoadingDetails.jsx";
-import "./detailsBanner.css";
+import { useMemo, useState, useEffect, useCallback } from 'react';
+import { useParams } from 'react-router-dom';
+import { generateImageUrl } from '../../../utils/movieUtils.js';
+import dayjs from 'dayjs';
+import apiClient from '../../../api/apiClient.js';
+import ContentWrapper from '../../../components/contentWrapper/ContentWrapper';
+import Genres from '../../../components/genres/Genres';
+import Img from '../../../components/lazyLoadImage/Img.jsx';
+import Player from '../../../components/player/Player.jsx';
+import SkLoadingDetails from '../../../components/skeletonLoading/skLoadDetails/SkLoadingDetails.jsx';
+import './detailsBanner.css';
 
 const DetailsBanner = ({ }) => {
     const { mediaType, id } = useParams();
@@ -17,37 +17,34 @@ const DetailsBanner = ({ }) => {
     const [loading, setLoading] = useState(false);
 
     const _genres = useMemo(() => data?.genres?.map((g) => g.id), [data?.genres]);
-    const director = useMemo(() => crew?.filter((f) => f.job === "Director") || [], [crew]);
-    const writer = useMemo(
-        () => crew?.filter((f) => ["Screenplay", "Story", "Writer"].includes(f.job)) || [],
-        [crew]
-    );
+    const director = useMemo(() => crew?.filter((f) => f.job === 'Director') || [], [crew]);
+    const writer = useMemo(() => crew?.filter((f) => ['Screenplay', 'Story', 'Writer'].includes(f.job)) || [], [crew]);
 
-    const fetchMediaDetails = async () => {
+    const fetchMediaDetails = useCallback(async () => {
         try {
             setLoading(true);
-            const [mediaResponse, crewResponse] = await axios.all([
-                axios.get(`/media/details?id=${id}&mediaType=${mediaType}`),
-                axios.get(`/media/crew?id=${id}&mediaType=${mediaType}`),
+            const [mediaResponse, crewResponse] = await Promise.all([
+                apiClient.get(`/media/details?id=${id}&mediaType=${mediaType}`),
+                apiClient.get(`/media/crew?id=${id}&mediaType=${mediaType}`),
             ]);
 
             setData(mediaResponse.data);
             setCrew(crewResponse.data.crew);
         } catch (error) {
-            console.error("Error fetching data from the backend:", error.message);
+            console.error('Error fetching data from the backend:', error.message);
         } finally {
             setLoading(false);
         }
-    };
+    }, [id, mediaType]);
 
     useEffect(() => {
         fetchMediaDetails();
-    }, []);
+    }, [fetchMediaDetails]);
 
     const toHoursAndMinutes = (totalMinutes) => {
         const hours = Math.floor(totalMinutes / 60);
         const minutes = totalMinutes % 60;
-        return `${hours}h${minutes > 0 ? ` ${minutes}m` : ""}`;
+        return `${hours}h${minutes > 0 ? ` ${minutes}m` : ''}`;
     };
 
     const renderCrewInfo = (label, crewArray) =>
@@ -58,7 +55,7 @@ const DetailsBanner = ({ }) => {
                     {crewArray.map((person, index) => (
                         <span key={index}>
                             {person.name}
-                            {index !== crewArray.length - 1 && ", "}
+                            {index !== crewArray.length - 1 && ', '}
                         </span>
                     ))}
                 </span>
@@ -86,8 +83,8 @@ const DetailsBanner = ({ }) => {
                                 <div className="media-info">
                                     <div className="title">
                                         {`${data?.name || data?.title} (${dayjs(
-                                            data?.release_date || data?.first_air_date
-                                        ).format("YYYY")})`}
+                                            data?.release_date || data?.first_air_date,
+                                        ).format('YYYY')})`}
                                     </div>
                                     <div className="subtitle">{data?.tagline}</div>
 
@@ -100,9 +97,7 @@ const DetailsBanner = ({ }) => {
 
                                     <div className="info">
                                         <span className="infoItem">Rating: </span>
-                                        <span className="infoItem">
-                                            {data?.vote_average.toFixed(1)}
-                                        </span>
+                                        <span className="infoItem">{data?.vote_average?.toFixed(1)}</span>
                                     </div>
 
                                     <div className="info" id="info-2">
@@ -115,24 +110,22 @@ const DetailsBanner = ({ }) => {
                                         <div className="infoItem">
                                             <span className="text bold">Release Date: </span>
                                             <span className="text">
-                                                {dayjs(
-                                                    data?.release_date || data?.first_air_date
-                                                ).format("MMM D, YYYY")}
+                                                {dayjs(data?.release_date || data?.first_air_date).format(
+                                                    'MMM D, YYYY',
+                                                )}
                                             </span>
                                         </div>
                                         {data?.runtime && (
                                             <div className="infoItem">
                                                 <span className="text bold">Runtime: </span>
-                                                <span className="text">
-                                                    {toHoursAndMinutes(data?.runtime)}
-                                                </span>
+                                                <span className="text">{toHoursAndMinutes(data?.runtime)}</span>
                                             </div>
                                         )}
                                     </div>
 
-                                    {renderCrewInfo("Director", director)}
-                                    {renderCrewInfo("Writer", writer)}
-                                    {renderCrewInfo("Creator", data?.created_by)}
+                                    {renderCrewInfo('Director', director)}
+                                    {renderCrewInfo('Writer', writer)}
+                                    {renderCrewInfo('Creator', data?.created_by)}
                                 </div>
                             </div>
                         </div>
