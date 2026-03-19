@@ -1,9 +1,9 @@
-import { useState } from "react";
-import useToast from "../../../hooks/useToast";
-import useUserStore from "../../../store/store";
-import { FaHeart, FaRegHeart } from "react-icons/fa";
-import axios from "axios";
-import "./bookmarkBtn.css";
+import { useState } from 'react';
+import useToast from '../../../hooks/useToast';
+import useUserStore from '../../../store/store';
+import { FaHeart, FaRegHeart } from 'react-icons/fa';
+import apiClient from '../../../api/apiClient';
+import './bookmarkBtn.css';
 
 const BookmarkBtn = ({ media, mediaType, inDetailsPage = false, inHoverCard = false }) => {
     const [isBookmarked, setIsBookmarked] = useState(false);
@@ -13,31 +13,28 @@ const BookmarkBtn = ({ media, mediaType, inDetailsPage = false, inHoverCard = fa
 
     const handleBookmark = async () => {
         if (!user) {
-            toast("error", "Please login to use this feature");
+            toast('error', 'Please login to use this feature');
             return;
         }
 
         try {
-            const { data } = await axios.post(
-                "/activity/addBookmark",
-                { mediaId: media.id, mediaType },
-                { withCredentials: true }
-            );
+            const { data } = await apiClient.post('/activity/addBookmark', {
+                mediaId: media.id,
+                mediaType,
+            });
+
             setIsBookmarked(true);
-            toast("success", data.message);
+            toast('success', data.message);
         } catch (error) {
-            toast("error", error.response?.data?.message);
+            toast('error', error.response?.data?.message);
         }
     };
 
     return (
         <div className="bookmark">
-            <button
-                className={inDetailsPage ? "basic" : "action-btn"}
-                onClick={handleBookmark}
-            >
+            <button className={inDetailsPage ? 'basic' : 'action-btn'} onClick={handleBookmark}>
                 {isBookmarked ? <FaHeart /> : <FaRegHeart />}
-                {!inHoverCard && <span>{isBookmarked ? "Bookmarked" : "Bookmark"}</span>}
+                {!inHoverCard && <span>{isBookmarked ? 'Bookmarked' : 'Bookmark'}</span>}
             </button>
         </div>
     );

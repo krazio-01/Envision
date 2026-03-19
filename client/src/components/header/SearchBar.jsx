@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import apiClient from '../../api/apiClient';
 import { debounce } from 'lodash';
 import { FaSearch, FaMagic, FaBolt } from 'react-icons/fa';
 import { MdMovie } from 'react-icons/md';
@@ -32,7 +32,7 @@ const SearchBar = ({ user }) => {
             return updateStandard({ showDropdown: false, suggestions: [] });
         }
         try {
-            const { data } = await axios.get(`/multi/suggestions?query=${query}`);
+            const { data } = await apiClient.get(`/multi/suggestions?query=${query}`);
             updateStandard({ suggestions: data.results, showDropdown: true });
             updateAi({ showDropdown: false });
         } catch (error) {
@@ -67,11 +67,9 @@ const SearchBar = ({ user }) => {
         updateAi({ showDropdown: true, isLoading: true });
 
         try {
-            const { data } = await axios.post(
-                '/ideas/recommendations',
-                { prompt: inputValue },
-                { withCredentials: true },
-            );
+            const { data } = await apiClient.post('/ideas/recommendations', {
+                prompt: inputValue,
+            });
             updateAi({ suggestions: data.data });
         } catch (error) {
             console.error('AI Fetch Error:', error);

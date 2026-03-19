@@ -1,7 +1,7 @@
 import useToast from '../../../hooks/useToast';
 import useUserStore from '../../../store/store';
 import { MdDeleteOutline } from 'react-icons/md';
-import axios from 'axios';
+import apiClient from '../../../api/apiClient';
 import './removeBtn.css';
 
 const RemoveBtn = ({ media, mediaType, setIsRemoved }) => {
@@ -15,11 +15,7 @@ const RemoveBtn = ({ media, mediaType, setIsRemoved }) => {
         }
 
         try {
-            const { data } = await axios.post(
-                '/activity/removeBookmark',
-                { mediaId: media.id, mediaType },
-                { withCredentials: true },
-            );
+            const { data } = await apiClient.post('/activity/removeBookmark', { mediaId: media.id, mediaType });
             setIsRemoved((prev) => !prev);
             toast('success', data.message);
         } catch (error) {

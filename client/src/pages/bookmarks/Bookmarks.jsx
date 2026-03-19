@@ -1,9 +1,9 @@
-import { useState, useEffect } from "react";
-import axios from "axios";
-import { PuffLoader } from "react-spinners";
-import MediaCard from "../../components/content/mediaCard/MediaCard";
-import ContentWrapper from "../../components/contentWrapper/ContentWrapper";
-import "./bookmarks.css";
+import { useState, useEffect, useCallback } from 'react';
+import apiClient from '../../api/apiClient';
+import { PuffLoader } from 'react-spinners';
+import MediaCard from '../../components/content/mediaCard/MediaCard';
+import ContentWrapper from '../../components/contentWrapper/ContentWrapper';
+import './bookmarks.css';
 
 const Bookmarks = () => {
     const [loading, setLoading] = useState(false);
@@ -11,36 +11,32 @@ const Bookmarks = () => {
     const [media, setMedia] = useState([]);
     const [isRemoved, setIsRemoved] = useState(false);
 
-    const fetchBookmarks = async () => {
+    const fetchBookmarks = useCallback(async () => {
         try {
             setLoading(true);
-            const { data } = await axios.get("/activity/fetchBookmarks", {
-                withCredentials: true,
-            });
+            const { data } = await apiClient.get('/activity/fetchBookmarks');
             setBookmarks(data);
             return data;
         } catch (error) {
-            console.error("Error fetching bookmarks:", error);
+            console.error('Error fetching bookmarks:', error);
             return [];
         }
-    };
+    }, []);
 
-    const fetchMediaDetails = async (bookmarks) => {
+    const fetchMediaDetails = useCallback(async (bookmarksList) => {
         try {
-            const mediaDetailsPromises = bookmarks.map((bookmark) =>
-                axios
-                    .get(`/media/details?id=${bookmark.mediaId}&mediaType=${bookmark.mediaType}`, {
-                        withCredentials: true,
-                    })
-                    .then((response) => response.data)
+            const mediaDetailsPromises = bookmarksList.map((bookmark) =>
+                apiClient
+                    .get(`/media/details?id=${bookmark.mediaId}&mediaType=${bookmark.mediaType}`)
+                    .then((response) => response.data),
             );
 
             const mediaDetails = await Promise.all(mediaDetailsPromises);
             setMedia(mediaDetails);
         } catch (error) {
-            console.error("Error fetching media details:", error);
+            console.error('Error fetching media details:', error);
         }
-    };
+    }, []);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -51,7 +47,7 @@ const Bookmarks = () => {
         };
 
         fetchData();
-    }, [isRemoved]);
+    }, [isRemoved, fetchBookmarks, fetchMediaDetails]);
 
     return (
         <div className="bookmarks-main">

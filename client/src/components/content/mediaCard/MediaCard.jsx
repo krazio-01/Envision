@@ -1,7 +1,7 @@
 import { useState, memo, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import dayjs from 'dayjs';
-import axios from 'axios';
+import apiClient from '../../../api/apiClient';
 import { PuffLoader } from 'react-spinners';
 import HoverCard from '../../hoverCard/HoverCard';
 import { generateImageUrl } from '../../../utils/movieUtils';
@@ -55,7 +55,7 @@ const MediaCard = ({ item, endpoint, showDeleteBtn, setIsRemoved }) => {
 
             try {
                 setLoading(true);
-                const { data } = await axios.get(`/media/details?mediaType=${endpoint}&id=${id}`, {
+                const { data } = await apiClient.get(`/media/details?mediaType=${endpoint}&id=${id}`, {
                     signal: abortControllerRef.current.signal,
                 });
 
