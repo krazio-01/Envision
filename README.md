@@ -1,23 +1,33 @@
 # Envision 🎬
 
-Online streaming of movies and TV shows directly from the browser. Users can browse shows, explore the trending, popular, and most rated sections, and much more. The application provides complete authentication functionality and a seamless browsing experience.
+Stream movies and TV shows straight from your browser. Envision is a custom-built platform featuring instant playback, smart AI recommendations based on your watch history, and a fast, responsive UI.
+
+<img src="https://github.com/user-attachments/assets/17867187-7727-4d2a-b67e-dda9a80b564c" width="100%" alt="Envision Hero Screenshot" />
 
 ## Live Demo 🌐
 Check out the live demo of the application [here](https://envision-watch.vercel.app/).
 
-## Features
+## Screenshots
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/0d011df2-b71c-422f-b6f2-7302a9318df9" width="49%" />
+  <img src="https://github.com/user-attachments/assets/146dd0b3-0c1a-416f-9f6e-fa747a876397" width="49%" />
+  <img src="https://github.com/user-attachments/assets/635bbf24-5af5-4053-b370-05cf67c9db10" width="49%" />
+  <img src="https://github.com/user-attachments/assets/67114fad-6ade-4d07-961b-22bc1609bfc0" width="49%" />
+</p>
 
-- **Authentication**: This application has full authentication with verify-email, forgot-password functionality
-- **Bookmark**: User can bookmark their favourite shows and watch them later
-- **Watch any show**: Directly watch movies or shows without worrying about downloading them.
+## Features
+- **Smart AI Search:** Ask for movie ideas based on your mood or specific vibes. It uses your watch history—like what you’ve finished or dropped—to give you suggestions that actually fit your taste.
+- **Authentication:** This application has full authentication with verify-email, forgot-password functionality
+- **Easy Streaming:** Watch movies and shows directly in the browser. You can quickly switch between seasons, episodes, or backup servers if one is slow.
 - **Explore different Sections**: It has Trending, Polpular and Most-rated sectins along with Explore pages
-- **Responsive Design**: Optimized for both desktop and mobile devices.
+- **Progress Tracking:** The app tracks how much you've watched and automatically marks shows as "Completed" or "Dropped" based on your watch time.
+- **Bookmarks:** Save anything you're interested in to your personal library so you can find it again later.
 
 ## Technologies Used 🛠️
 
-- **Frontend**: React
+- **Frontend**: React, Zustand
 - **Backend**: Node.js, Express.js
-- **API**: TMDB and Vidsrc
+- **API**: TMDB, Vidsrc, and Google Gemini AI
 - **Styling**: CSS
 
 ## Installation 🚀
@@ -35,7 +45,7 @@ Check out the live demo of the application [here](https://envision-watch.vercel.
    npm install
 
 3. **Set up environment variables**
-   set up environment variables using ".env copy" file by renaming it to ".env" and passing correct values
+   set up environment variables using ".env copy" file by renaming it to ".env" and patch correct values.
 
 4. **Start the application**
    1. Terminal for Backend
