@@ -1,5 +1,5 @@
-import { useState, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useCallback, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import apiClient from '../../api/apiClient';
 import { debounce } from 'lodash';
 import { FaSearch, FaMagic, FaBolt } from 'react-icons/fa';
@@ -22,10 +22,18 @@ const SearchBar = ({ user }) => {
     });
 
     const navigate = useNavigate();
+    const location = useLocation();
     const toast = useToast();
 
     const updateStandard = (updates) => setStandardSearch((prev) => ({ ...prev, ...updates }));
     const updateAi = (updates) => setAiSearch((prev) => ({ ...prev, ...updates }));
+
+    useEffect(() => {
+        updateStandard({ showDropdown: false });
+        updateAi({ showDropdown: false });
+        setShowMobileSearch(false);
+        setInputValue('');
+    }, [location.pathname]);
 
     const fetchSuggestions = async (query) => {
         if (!query.trim()) {
