@@ -5,6 +5,10 @@ import sendEmail from '../utils/sendMail.js';
 import jwt from 'jsonwebtoken';
 import fs from 'fs';
 import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const signUp = async (req, res) => {
     try {
@@ -50,7 +54,7 @@ const signUp = async (req, res) => {
         let subject = null,
             html = null;
 
-        const templatePath = path.join(process.cwd(), 'templates', 'verificationTemplate.html');
+        const templatePath = path.join(__dirname, '..', 'templates', 'verificationTemplate.html');
         const verifyTemplate = fs.readFileSync(templatePath, 'utf8');
 
         const verificationContent = verifyTemplate
@@ -138,7 +142,7 @@ const forgotPasswordRequest = async (req, res) => {
         let subject = null,
             html = null;
 
-        const templatePath = path.join(process.cwd(), 'templates', 'forgot-password.html');
+        const templatePath = path.join(__dirname, '..', 'templates', 'forgot-password.html');
         const passwordResetTemplate = fs.readFileSync(templatePath, 'utf8');
 
         const passwordResetContent = passwordResetTemplate
