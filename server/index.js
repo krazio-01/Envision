@@ -2,6 +2,8 @@ import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 import mongoose from 'mongoose';
+import cookieParser from 'cookie-parser';
+import helmet from 'helmet';
 import authRoutes from './routes/authRoutes.js';
 import userActivityRoutes from './routes/userActivityRoutes.js';
 import tvShowRoutes from './routes/tvShowRoutes.js';
@@ -9,7 +11,6 @@ import movieRoutes from './routes/movieRoutes.js';
 import multiRoutes from './routes/multiRoutes.js';
 import mediaRoutes from './routes/mediaRoutes.js';
 import recommendationRoutes from './routes/recommendationRoutes.js';
-import cookieParser from 'cookie-parser';
 
 // Initialize the express application
 const app = express();
@@ -26,6 +27,7 @@ mongoose
     });
 
 // Middleware setup
+app.use(helmet());
 app.use(
     cors({
         origin: process.env.FRONTEND_URL,
