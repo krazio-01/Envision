@@ -14,38 +14,15 @@
     "routes": [
         {
             "src": "/(.*)",
-            "dest": "/index.js"
-        }
-    ],
-    "headers": [
-        {
-            "source": "/(.*)",
-            "headers": [
-                {
-                    "key": "X-Content-Type-Options",
-                    "value": "nosniff"
-                },
-                {
-                    "key": "X-Frame-Options",
-                    "value": "DENY"
-                },
-                {
-                    "key": "X-XSS-Protection",
-                    "value": "1; mode=block"
-                },
-                {
-                    "key": "Strict-Transport-Security",
-                    "value": "max-age=63072000; includeSubDomains; preload"
-                },
-                {
-                    "key": "Referrer-Policy",
-                    "value": "strict-origin-when-cross-origin"
-                },
-                {
-                    "key": "Cross-Origin-Opener-Policy",
-                    "value": "same-origin"
-                }
-            ]
+            "dest": "/index.js",
+            "headers": {
+                "X-Content-Type-Options": "nosniff",
+                "X-Frame-Options": "DENY",
+                "X-XSS-Protection": "1; mode=block",
+                "Strict-Transport-Security": "max-age=63072000; includeSubDomains; preload",
+                "Referrer-Policy": "strict-origin-when-cross-origin",
+                "Cross-Origin-Opener-Policy": "same-origin"
+            }
         }
     ]
 }
