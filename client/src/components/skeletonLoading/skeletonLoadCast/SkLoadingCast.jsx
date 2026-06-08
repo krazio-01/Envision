@@ -1,4 +1,3 @@
-import React from 'react';
 import './skLoadingCast.css';
 import '../skeleton.css';
 

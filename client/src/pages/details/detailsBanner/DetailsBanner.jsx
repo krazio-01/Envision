@@ -10,7 +10,7 @@ import Player from '../../../components/player/Player.jsx';
 import SkLoadingDetails from '../../../components/skeletonLoading/skLoadDetails/SkLoadingDetails.jsx';
 import './detailsBanner.css';
 
-const DetailsBanner = ({ }) => {
+const DetailsBanner = () => {
     const { mediaType, id } = useParams();
     const [data, setData] = useState(null);
     const [crew, setCrew] = useState(null);

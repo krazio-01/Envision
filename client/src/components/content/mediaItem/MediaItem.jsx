@@ -12,8 +12,7 @@ const MediaItem = ({ suggestion, setShowSuggestion }) => {
         window.scrollTo(0, 0);
         setShowSuggestion(false);
         navigate(
-            `/${suggestion.media_type || endpoint}/${
-                suggestion.original_name || suggestion.title
+            `/${suggestion.media_type}/${suggestion.original_name || suggestion.title
             }/${suggestion.id}/1/1`
         );
     };
