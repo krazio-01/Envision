@@ -1,6 +1,7 @@
 import { useState, memo, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import dayjs from 'dayjs';
+import axios from 'axios';
 import apiClient from '../../../api/apiClient';
 import { PuffLoader } from 'react-spinners';
 import HoverCard from '../../hoverCard/HoverCard';
@@ -10,7 +11,7 @@ import './mediaCard.css';
 
 const EDGE_THRESHOLD = 32;
 
-const MediaCard = ({ item, endpoint, showDeleteBtn, setIsRemoved }) => {
+const MediaCard = memo(({ item, endpoint, showDeleteBtn, setIsRemoved }) => {
     const [details, setDetails] = useState(null);
     const [loading, setLoading] = useState(true);
     const [containerStyle, setContainerStyle] = useState({
@@ -25,8 +26,8 @@ const MediaCard = ({ item, endpoint, showDeleteBtn, setIsRemoved }) => {
     const initialSeason = getInitialValue(`currentSeason_${id}`, 1);
     const initialEpisode = getInitialValue(`currentEpisode_${id}`, 1);
 
-    const date = dayjs(endpoint === 'movie' ? release_date : first_air_date);
-    const formattedDate = date.format('YYYY');
+    const rawDate = endpoint === 'movie' ? release_date : first_air_date;
+    const formattedDate = rawDate ? dayjs(rawDate).format('YYYY') : 'TBA';
 
     useEffect(() => {
         return () => {
@@ -43,10 +44,10 @@ const MediaCard = ({ item, endpoint, showDeleteBtn, setIsRemoved }) => {
             const isNearRightEdge = rect.right >= window.innerWidth - EDGE_THRESHOLD;
             const isNearLeftEdge = rect.left <= EDGE_THRESHOLD;
 
-            setContainerStyle((prevStyle) => {
+            setContainerStyle(() => {
                 if (isNearRightEdge) return { right: 'var(--edge-offset)' };
-                else if (isNearLeftEdge) return { left: 'var(--edge-offset)' };
-                else return prevStyle;
+                if (isNearLeftEdge) return { left: 'var(--edge-offset)' };
+                return { left: 'var(--edge-offset)' };
             });
 
             if (abortControllerRef.current) abortControllerRef.current.abort();
@@ -113,9 +114,10 @@ const MediaCard = ({ item, endpoint, showDeleteBtn, setIsRemoved }) => {
             </div>
         </div>
     );
-};
+});
 
-export default memo(MediaCard);
+MediaCard.displayName = 'MediaCard';
+export default MediaCard;
 
 function getInitialValue(key, defaultValue) {
     return Number((sessionStorage.getItem(key) || '').match(/\d+/)) || defaultValue;

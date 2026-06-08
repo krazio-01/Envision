@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useMemo } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import apiClient from '../../api/apiClient';
 import { debounce } from 'lodash';
@@ -25,30 +25,31 @@ const SearchBar = ({ user }) => {
     const location = useLocation();
     const toast = useToast();
 
-    const updateStandard = (updates) => setStandardSearch((prev) => ({ ...prev, ...updates }));
-    const updateAi = (updates) => setAiSearch((prev) => ({ ...prev, ...updates }));
+    const updateStandard = useCallback((updates) => setStandardSearch((prev) => ({ ...prev, ...updates })), []);
+    const updateAi = useCallback((updates) => setAiSearch((prev) => ({ ...prev, ...updates })), []);
 
     useEffect(() => {
         updateStandard({ showDropdown: false });
         updateAi({ showDropdown: false });
         setShowMobileSearch(false);
         setInputValue('');
-    }, [location.pathname]);
+    }, [location.pathname, updateAi, updateStandard]);
 
-    const fetchSuggestions = async (query) => {
-        if (!query.trim()) {
-            return updateStandard({ showDropdown: false, suggestions: [] });
-        }
-        try {
-            const { data } = await apiClient.get(`/multi/suggestions?query=${query}`);
-            updateStandard({ suggestions: data.results, showDropdown: true });
-            updateAi({ showDropdown: false });
-        } catch (error) {
-            console.error('Fetch Error:', error);
-        }
-    };
+    const debouncedSearch = useMemo(
+        () =>
+            debounce(async (query) => {
+                if (!query.trim()) return updateStandard({ showDropdown: false, suggestions: [] });
 
-    const debouncedSearch = useCallback(debounce(fetchSuggestions, 300), []);
+                try {
+                    const { data } = await apiClient.get(`/multi/suggestions?query=${query}`);
+                    updateStandard({ suggestions: data.results, showDropdown: true });
+                    updateAi({ showDropdown: false });
+                } catch (error) {
+                    console.error('Fetch Error:', error);
+                }
+            }, 300),
+        [updateStandard, updateAi],
+    );
 
     const handleInputChange = (e) => {
         const value = e.target.value;
