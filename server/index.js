@@ -1,7 +1,7 @@
 import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
-import mongoose from 'mongoose';
+import connectDB from './utils/db.js';
 import cookieParser from 'cookie-parser';
 import authRoutes from './routes/authRoutes.js';
 import userActivityRoutes from './routes/userActivityRoutes.js';
@@ -15,15 +15,8 @@ import recommendationRoutes from './routes/recommendationRoutes.js';
 const app = express();
 const PORT = process.env.PORT || 8800;
 
-mongoose
-    .connect(process.env.MONGO_URI)
-    .then(() => {
-        console.log('Connected to DB');
-    })
-    .catch((err) => {
-        console.error('Error while connecting to DB', err);
-        process.exit(1);
-    });
+// Connect to DB (Vercel will cache this connection)
+connectDB().catch(err => console.error('Error while connecting to DB', err));
 
 // Middleware setup
 app.use(
