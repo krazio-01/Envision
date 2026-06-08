@@ -1,4 +1,3 @@
-import React from "react";
 import "./skLoadingBanner.css";
 import "../skeleton.css";
 

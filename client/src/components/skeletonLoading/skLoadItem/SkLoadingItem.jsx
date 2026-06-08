@@ -1,4 +1,3 @@
-import React from 'react';
 import './skLoadingItem.css';
 
 const SkeletonLoading = () => {
