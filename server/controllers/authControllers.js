@@ -47,7 +47,7 @@ const signUp = async (req, res) => {
         const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
         await sendEmail(user.email, 'Account Verification', 'verify-email.html', {
             name: user.name || 'User',
-            verifyLink: `${frontendUrl}/verifyEmail?token=${hashedToken}`,
+            verifyLink: `${frontendUrl}/verify-email?token=${hashedToken}`,
         });
 
         res.status(201).json({

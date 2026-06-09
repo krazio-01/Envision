@@ -23,7 +23,7 @@ router.post("/forgot-password/request", forgotPasswordRequest);
 router.post("/forgot-password/change", forgotPasswordChange);
 
 // Verify Email endpoint
-router.post("/verifyEmail", verifyEmail);
+router.post("/verify-email", verifyEmail);
 
 // Logout endpoint
 router.post("/logout", logout);

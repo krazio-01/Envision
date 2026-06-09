@@ -47,7 +47,7 @@ const router = createBrowserRouter(
                 <Route path="/forgot-password/change" element={<Change />} />
             </Route>
 
-            <Route path="/verifyEmail" element={<VerifyEmail />} />
+            <Route path="/verify-email" element={<VerifyEmail />} />
         </>
     )
 );
