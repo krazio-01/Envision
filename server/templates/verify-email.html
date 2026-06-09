@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="color-scheme" content="light dark" />
+        <meta name="supported-color-schemes" content="light dark" />
+        <title>Verify Your Account - Envision</title>
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                background-color: #f9fafb;
+                font-family:
+                    Inter,
+                    -apple-system,
+                    BlinkMacSystemFont,
+                    'Segoe UI',
+                    Roboto,
+                    Helvetica,
+                    Arial,
+                    sans-serif;
+                -webkit-font-smoothing: antialiased;
+                color: #111827;
+            }
+
+            .wrapper {
+                width: 100%;
+                table-layout: fixed;
+                background-color: #f9fafb;
+            }
+
+            .layout-padding {
+                padding: 36px 20px;
+            }
+
+            .main-container {
+                max-width: 520px;
+                margin: 0 auto;
+                background-color: #ffffff;
+                border-radius: 12px;
+                border: 1px solid #e5e7eb;
+                padding: 40px;
+            }
+
+            .logo-text {
+                font-size: 20px;
+                font-weight: 700;
+                color: #111827;
+                letter-spacing: -0.5px;
+                margin-bottom: 32px;
+                display: block;
+            }
+
+            h1 {
+                color: #111827;
+                font-size: 24px;
+                font-weight: 600;
+                margin-bottom: 16px;
+                letter-spacing: -0.5px;
+            }
+
+            p {
+                font-size: 15px;
+                line-height: 24px;
+                color: #4b5563;
+                margin-bottom: 24px;
+            }
+
+            .btn-container {
+                margin-top: 32px;
+                margin-bottom: 32px;
+            }
+
+            .btn {
+                display: inline-block;
+                background-color: #000000;
+                color: #ffffff !important;
+                font-size: 14px;
+                font-weight: 600;
+                text-decoration: none;
+                padding: 12px 24px;
+                border-radius: 6px;
+            }
+
+            .divider {
+                border-top: 1px solid #e5e7eb;
+                margin: 32px 0;
+            }
+
+            .footer-text {
+                font-size: 13px;
+                line-height: 20px;
+                color: #6b7280;
+                margin-bottom: 0;
+            }
+
+            .footer-text span {
+                font-weight: 600;
+                color: #4b5563;
+            }
+
+            @media (prefers-color-scheme: dark) {
+                body,
+                .wrapper {
+                    background-color: #111111 !important;
+                }
+
+                .main-container {
+                    background-color: #1a1a1a !important;
+                    border-color: #333333 !important;
+                }
+
+                h1,
+                .logo-text {
+                    color: #ffffff !important;
+                }
+
+                p {
+                    color: #a1a1aa !important;
+                }
+
+                .btn {
+                    background-color: #ffffff !important;
+                    color: #000000 !important;
+                }
+
+                .divider {
+                    border-color: #333333 !important;
+                }
+
+                .footer-text {
+                    color: #727272 !important;
+                }
+
+                .footer-text span {
+                    color: #888888 !important;
+                }
+            }
+
+            @media screen and (max-width: 600px) {
+                .layout-padding {
+                    padding: 0 !important;
+                }
+
+                .main-container {
+                    padding: 32px 20px !important;
+                    width: 100% !important;
+                }
+
+                h1 {
+                    font-size: 22px !important;
+                }
+
+                .btn {
+                    display: block;
+                    width: 100%;
+                    text-align: center;
+                    box-sizing: border-box;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="wrapper">
+            <table role="presentation" cellspacing="0" cellpadding="0" width="100%">
+                <tr>
+                    <td align="center" class="layout-padding">
+                        <table role="presentation" cellspacing="0" cellpadding="0" class="main-container">
+                            <tr>
+                                <td align="left">
+                                    <div class="logo-text">Envision</div>
+
+                                    <h1>Verify your email</h1>
+
+                                    <p>
+                                        Dear {{name}},<br /><br />
+                                        Thank you for registering. To ensure the security of your account and activate
+                                        your workspace, please verify your email address.
+                                    </p>
+
+                                    <div class="btn-container">
+                                        <a href="{{verifyLink}}" class="btn">Verify Account</a>
+                                    </div>
+
+                                    <div class="divider"></div>
+
+                                    <p class="footer-text">
+                                        <span>Security Note:</span> This secure link expires in 1 hour. <br /><br />
+                                        If you did not request this verification, please ignore this email. Your account
+                                        will not be activated.
+                                    </p>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </body>
+</html>
