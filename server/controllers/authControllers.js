@@ -4,6 +4,9 @@ import { v4 as uuidv4 } from 'uuid';
 import sendEmail from '../utils/sendMail.js';
 import jwt from 'jsonwebtoken';
 
+const EMAIL_VERIFICATION_TTL = 24 * 60 * 60 * 1000; // 24H
+const PASSWORD_RESET_TTL = 15 * 60 * 1000; // 15 minutes
+
 const signUp = async (req, res) => {
     try {
         const { name, email, password } = req.body;
@@ -38,7 +41,7 @@ const signUp = async (req, res) => {
             password: hashedPassword,
             avatar: '../images/useravatar.webp',
             verifyToken: hashedToken,
-            verifyTokenExpiry: Date.now() + 3600000, // 1 hour from now
+            verifyTokenExpiry: Date.now() + EMAIL_VERIFICATION_TTL,
         });
 
         const user = await newUser.save();
@@ -117,7 +120,7 @@ const forgotPasswordRequest = async (req, res) => {
         const resetToken = uuidv4();
 
         user.forgotPasswordToken = resetToken;
-        user.forgotPasswordTokenExpiry = Date.now() + 3600000;
+        user.forgotPasswordTokenExpiry = Date.now() + PASSWORD_RESET_TTL;
 
         await user.save({ validateBeforeSave: false });
 
