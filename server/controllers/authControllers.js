@@ -3,12 +3,6 @@ import bcryptjs from 'bcryptjs';
 import { v4 as uuidv4 } from 'uuid';
 import sendEmail from '../utils/sendMail.js';
 import jwt from 'jsonwebtoken';
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 const signUp = async (req, res) => {
     try {
@@ -50,22 +44,11 @@ const signUp = async (req, res) => {
         const user = await newUser.save();
 
         // Send verification email
-        const to = user.email;
-        let subject = null,
-            html = null;
-
-        const templatePath = path.join(__dirname, '..', 'templates', 'verificationTemplate.html');
-        const verifyTemplate = fs.readFileSync(templatePath, 'utf8');
-
-        const verificationContent = verifyTemplate
-            .replace(/{{name}}/g, user.name)
-            .replace(/{{FRONTEND_URL}}/g, process.env.FRONTEND_URL)
-            .replace(/{{verifyToken}}/g, user.verifyToken);
-
-        // send verification mail to the user
-        subject = 'Account Verification';
-        html = verificationContent;
-        await sendEmail(to, subject, null, html);
+        const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
+        await sendEmail(user.email, 'Account Verification', 'verify-email.html', {
+            name: user.name || 'User',
+            verifyLink: `${frontendUrl}/verifyEmail?token=${hashedToken}`,
+        });
 
         res.status(201).json({
             message: 'Registration successful',
@@ -138,21 +121,11 @@ const forgotPasswordRequest = async (req, res) => {
 
         await user.save({ validateBeforeSave: false });
 
-        const to = user.email;
-        let subject = null,
-            html = null;
-
-        const templatePath = path.join(__dirname, '..', 'templates', 'forgot-password.html');
-        const passwordResetTemplate = fs.readFileSync(templatePath, 'utf8');
-
-        const passwordResetContent = passwordResetTemplate
-            .replace(/{{FRONTEND_URL}}/g, process.env.FRONTEND_URL)
-            .replace(/{{forgotPasswordToken}}/g, resetToken);
-
-        // send verification mail to the user
-        subject = 'Password change request for Envision';
-        html = passwordResetContent;
-        await sendEmail(to, subject, null, html);
+        const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
+        const to = user?.email;
+        await sendEmail(to, 'Password change request for Envision', 'reset-password.html', {
+            resetLink: `${frontendUrl}/forgot-password/change?token=${resetToken}`
+        });
 
         res.status(200).json({
             message: `An email has been sent to ${to} with further instructions.`,
