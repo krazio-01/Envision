@@ -13,7 +13,7 @@ const VerifyEmail = () => {
     useEffect(() => {
         const verifyUserEmail = async () => {
             try {
-                const { data } = await apiClient.post('/auth/verifyEmail', {
+                const { data } = await apiClient.post('/auth/verify-email', {
                     token: token ? token : '',
                 });
                 setVerified(data.message);
