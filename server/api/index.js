@@ -1,15 +1,15 @@
 import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
-import connectDB from './utils/connectDB.js';
+import connectDB from '../utils/connectDB.js';
 import cookieParser from 'cookie-parser';
-import authRoutes from './routes/authRoutes.js';
-import userActivityRoutes from './routes/userActivityRoutes.js';
-import tvShowRoutes from './routes/tvShowRoutes.js';
-import movieRoutes from './routes/movieRoutes.js';
-import multiRoutes from './routes/multiRoutes.js';
-import mediaRoutes from './routes/mediaRoutes.js';
-import recommendationRoutes from './routes/recommendationRoutes.js';
+import authRoutes from '../routes/authRoutes.js';
+import userActivityRoutes from '../routes/userActivityRoutes.js';
+import tvShowRoutes from '../routes/tvShowRoutes.js';
+import movieRoutes from '../routes/movieRoutes.js';
+import multiRoutes from '../routes/multiRoutes.js';
+import mediaRoutes from '../routes/mediaRoutes.js';
+import recommendationRoutes from '../routes/recommendationRoutes.js';
 
 // Initialize the express application
 const app = express();
