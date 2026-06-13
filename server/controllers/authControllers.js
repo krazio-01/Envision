@@ -131,8 +131,10 @@ const forgotPasswordRequest = async (req, res) => {
 
         if (!email) return res.status(400).json({ message: 'Email is required' });
 
+        const genericSuccessMessage = 'If an account with that email exists, a password reset link has been sent.';
+
         const user = await User.findOne({ email });
-        if (!user) return res.status(404).json({ message: 'User not found' });
+        if (!user) return res.status(200).json({ message: genericSuccessMessage });
 
         if (user.forgotPasswordTokenExpiry) {
             const lastRequestTime = user.forgotPasswordTokenExpiry - PASSWORD_RESET_TTL;
@@ -160,9 +162,7 @@ const forgotPasswordRequest = async (req, res) => {
             resetLink: `${frontendUrl}/forgot-password/change?token=${resetToken}`,
         });
 
-        res.status(200).json({
-            message: `An email has been sent to ${to} with further instructions.`,
-        });
+        res.status(200).json({ message: genericSuccessMessage });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
