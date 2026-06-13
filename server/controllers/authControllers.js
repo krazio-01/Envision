@@ -55,7 +55,6 @@ const signUp = async (req, res) => {
 
         res.status(201).json({
             message: 'Registration successful',
-            user: user,
         });
     } catch (err) {
         res.status(500).json({ message: 'Internal server error' });
@@ -145,7 +144,7 @@ const forgotPasswordRequest = async (req, res) => {
         const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
         const to = user?.email;
         await sendEmail(to, 'Password change request for Envision', 'reset-password.html', {
-            resetLink: `${frontendUrl}/forgot-password/change?token=${resetToken}`
+            resetLink: `${frontendUrl}/forgot-password/change?token=${resetToken}`,
         });
 
         res.status(200).json({
