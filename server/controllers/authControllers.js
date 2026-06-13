@@ -134,6 +134,19 @@ const forgotPasswordRequest = async (req, res) => {
         const user = await User.findOne({ email });
         if (!user) return res.status(404).json({ message: 'User not found' });
 
+        if (user.forgotPasswordTokenExpiry) {
+            const lastRequestTime = user.forgotPasswordTokenExpiry - PASSWORD_RESET_TTL;
+            const timeSinceLastRequest = Date.now() - lastRequestTime;
+            const cooldown = 2 * 60 * 1000;
+
+            if (timeSinceLastRequest < 2 * 60 * 1000) {
+                const waitTime = Math.ceil((cooldown - timeSinceLastRequest) / 1000);
+                return res
+                    .status(200)
+                    .json({ message: `Please wait ${waitTime} seconds before requesting another link.` });
+            }
+        }
+
         const resetToken = uuidv4();
 
         user.forgotPasswordToken = resetToken;
