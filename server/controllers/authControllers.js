@@ -72,7 +72,25 @@ const login = async (req, res) => {
         const user = await User.findOne({ email });
         if (!user) return res.status(404).json({ message: 'Invalid credentials' });
 
-        if (!user.isVerfied) return res.status(401).json({ message: 'Please verify your email first' });
+        if (!user.isVerfied) {
+            if (user.verifyTokenExpiry && user.verifyTokenExpiry < Date.now()) {
+                const newHashedToken = uuidv4();
+                user.verifyToken = newHashedToken;
+                user.verifyTokenExpiry = Date.now() + EMAIL_VERIFICATION_TTL;
+                await user.save({ validateBeforeSave: false });
+
+                const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
+                await sendEmail(user.email, 'Account Verification', 'verify-email.html', {
+                    name: user.name || 'User',
+                    verifyLink: `${frontendUrl}/verify-email?token=${newHashedToken}`,
+                });
+
+                return res.status(401).json({
+                    message: 'Account not verified. A fresh activation link has been sent to your inbox!',
+                });
+            }
+            return res.status(401).json({ message: 'Please verify your email first. Check your inbox.' });
+        }
 
         const isMatch = await bcryptjs.compare(password, user.password);
         if (!isMatch) return res.status(401).json({ message: 'Invalid credentials' });
