@@ -4,7 +4,7 @@ Stream movies and TV shows straight from your browser. Envision is a custom-buil
 
 <img src="https://github.com/user-attachments/assets/17867187-7727-4d2a-b67e-dda9a80b564c" width="100%" alt="Envision Hero Screenshot" />
 
-## Live Demo 🌐
+## Live Demo 🚀
 Check out the live demo of the application [here](https://envision-watch.vercel.app/).
 
 ## Screenshots
@@ -19,7 +19,7 @@ Check out the live demo of the application [here](https://envision-watch.vercel.
 - **Smart AI Search:** Ask for movie ideas based on your mood or specific vibes. It uses your watch history—like what you’ve finished or dropped—to give you suggestions that actually fit your taste.
 - **Authentication:** This application has full authentication with verify-email, forgot-password functionality
 - **Easy Streaming:** Watch movies and shows directly in the browser. You can quickly switch between seasons, episodes, or backup servers if one is slow.
-- **Explore different Sections**: It has Trending, Polpular and Most-rated sectins along with Explore pages
+- **Explore different Sections**: It has Trending, Popular and Most-rated sections along with Explore pages
 - **Progress Tracking:** The app tracks how much you've watched and automatically marks shows as "Completed" or "Dropped" based on your watch time.
 - **Bookmarks:** Save anything you're interested in to your personal library so you can find it again later.
 
