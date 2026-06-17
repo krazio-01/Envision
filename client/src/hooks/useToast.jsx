@@ -1,4 +1,4 @@
-import { toast, useToasterStore } from "react-hot-toast";
+import { toast, useToasterStore } from 'react-hot-toast';
 
 const useToast = () => {
     const { toasts } = useToasterStore();
@@ -8,49 +8,55 @@ const useToast = () => {
 
         const toastOptions = {
             style: {
-                background: "#333",
-                color: "#fff",
+                background: '#333',
+                color: '#fff',
             },
             ...options,
         };
 
         switch (type) {
-            case "success":
+            case 'success':
                 toast.success(message, toastOptions);
                 break;
-            case "error":
+            case 'error':
                 toast.error(message, toastOptions);
                 break;
-            case "loading":
+            case 'loading':
                 toast.loading(message, toastOptions);
                 break;
-            case "custom":
+            case 'custom':
                 toast(
                     (t) => (
                         <div
                             className="custom-toast"
                             style={{
-                                display: "flex",
-                                padding: "3px",
-                                borderRadius: "5px",
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '10px',
                             }}
                         >
-                            {message}
+                            <span style={{ lineHeight: '1.2' }}>{message}</span>
                             <button
                                 onClick={() => toast.dismiss(t.id)}
                                 style={{
-                                    marginLeft: "5px",
-                                    border: "none",
-                                    paddingInline: "10px",
-                                    borderRadius: "5px",
-                                    cursor: "pointer",
+                                    background: 'rgba(255, 255, 255, 0.1)',
+                                    color: '#fff',
+                                    border: 'none',
+                                    padding: '12px',
+                                    borderRadius: '6px',
+                                    cursor: 'pointer',
+                                    fontSize: '13px',
+                                    whiteSpace: 'nowrap',
+                                    transition: 'background 0.2s ease',
                                 }}
+                                onMouseEnter={(e) => (e.target.style.background = 'rgba(255, 255, 255, 0.2)')}
+                                onMouseLeave={(e) => (e.target.style.background = 'rgba(255, 255, 255, 0.1)')}
                             >
                                 Dismiss
                             </button>
                         </div>
                     ),
-                    toastOptions
+                    toastOptions,
                 );
                 break;
             default:
