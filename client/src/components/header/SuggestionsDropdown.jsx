@@ -50,7 +50,11 @@ const SuggestionsDropdown = memo(
                             {displaySuggestions.length > 0 ? (
                                 displaySuggestions.map((item, index) => (
                                     <div key={item.id || index}>
-                                        <MediaItem suggestion={item} setShowSuggestion={setShowSuggestion} />
+                                        <MediaItem
+                                            suggestion={item}
+                                            setShowSuggestion={setShowSuggestion}
+                                            isAiResults={true}
+                                        />
                                         {item.reason && (
                                             <div className="reason-wrapper">
                                                 <MdAutoAwesome />
