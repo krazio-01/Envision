@@ -723,6 +723,14 @@
             }
         }
 
+        .search_suggest {
+            &.ai-dropdown {
+                .loading-state {
+                    padding: 25px 0;
+                }
+            }
+        }
+
         .hide-on-mobile {
             display: none;
         }
