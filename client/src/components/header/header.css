@@ -346,11 +346,24 @@
             }
 
             .loading-state {
-                padding: 30px 10px;
+                padding: 40px 10px;
                 text-align: center;
-                color: #888;
                 font-size: 14px;
-                animation: pulse 1.5s infinite;
+                font-weight: 500;
+                background: linear-gradient(90deg, #666 0%, #fff 50%, #666 100%);
+                background-size: 200% auto;
+                color: transparent;
+                -webkit-background-clip: text;
+                background-clip: text;
+                animation: shimmer 2s linear infinite;
+
+                &::after {
+                    content: '';
+                    display: inline-block;
+                    width: 15px;
+                    text-align: left;
+                    animation: dots 1.5s steps(4, end) infinite;
+                }
             }
 
             .results {
@@ -594,16 +607,27 @@
     }
 }
 
-@keyframes pulse {
+@keyframes shimmer {
+    to {
+        background-position: 200% center;
+    }
+}
+
+@keyframes dots {
     0% {
-        opacity: 0.6;
+        content: '';
+    }
+    25% {
+        content: '.';
     }
     50% {
-        opacity: 1;
-        color: var(--red);
+        content: '..';
+    }
+    75% {
+        content: '...';
     }
     100% {
-        opacity: 0.6;
+        content: '';
     }
 }
 

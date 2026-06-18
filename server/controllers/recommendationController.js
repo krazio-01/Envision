@@ -1,5 +1,5 @@
 import UserActivity from '../models/UserActivityModel.js';
-import { generateMovieSuggestions } from '../services/ai.service.js';
+import { generateMediaSuggestions } from '../services/ai.service.js';
 import { tmdbApi } from '../utils/tmdbClient.js';
 
 const getMediaTitlesFromIds = async (mediaItems) => {
@@ -56,7 +56,7 @@ export const getPersonalizedRecommendations = async (req, res) => {
             });
         }
 
-        const aiRecommendations = await generateMovieSuggestions(userProfile, userPrompt);
+        const aiRecommendations = await generateMediaSuggestions(userProfile, userPrompt);
 
         const enrichedRecommendations = await Promise.all(
             aiRecommendations.map(async (recommendation) => {
@@ -93,6 +93,8 @@ export const getPersonalizedRecommendations = async (req, res) => {
         return res.status(200).json({ success: true, data: finalData });
     } catch (error) {
         console.error('Recommendations Controller Error:', error);
-        return res.status(500).json({ success: false, error: 'Failed to fetch recommendations.' });
+        return res
+            .status(500)
+            .json({ success: false, error: 'The box office is packed! Please try again shortly.' });
     }
 };
