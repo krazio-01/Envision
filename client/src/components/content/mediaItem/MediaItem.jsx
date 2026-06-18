@@ -5,7 +5,7 @@ import { FaRegStar } from "react-icons/fa";
 import dayjs from "dayjs";
 import "./mediaItem.css";
 
-const MediaItem = ({ suggestion, setShowSuggestion }) => {
+const MediaItem = ({ suggestion, setShowSuggestion, isAiResults }) => {
     const navigate = useNavigate();
 
     const handleClick = () => {
@@ -18,7 +18,7 @@ const MediaItem = ({ suggestion, setShowSuggestion }) => {
     };
 
     return (
-        <div className="sugg">
+        <div className={`sugg ${isAiResults ? 'ai-result' : ''}`}>
             <div key={suggestion.id} className="suggestedItem" onClick={handleClick}>
                 <div className="item-poster">
                     <div>

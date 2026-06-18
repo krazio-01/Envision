@@ -505,7 +505,7 @@
         &.ai {
             background: rgb(255 255 255 / 0.1);
             color: white;
-            padding: 6px 20px;
+            padding-block: 6px;
             border-radius: 20px;
             font-weight: bold;
             font-size: var(--fz-sm);
@@ -720,6 +720,14 @@
                 padding: 6px var(--fz-xs);
                 font-size: var(--fz-xs);
                 margin-left: 5px;
+            }
+        }
+
+        .search_suggest {
+            &.ai-dropdown {
+                .loading-state {
+                    padding: 25px 0;
+                }
             }
         }
 
