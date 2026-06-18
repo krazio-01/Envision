@@ -2,6 +2,12 @@ import { GoogleGenAI, Type } from '@google/genai';
 
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
+const rawModels = (process.env.GEMINI_MODELS || 'gemini-2.5-flash').split('|');
+const MODEL_PRIORITY_LIST = [];
+for (const m of rawModels) {
+    if (m.trim()) MODEL_PRIORITY_LIST.push(m.trim());
+}
+
 const RESPONSE_SCHEMA = {
     type: Type.ARRAY,
     items: {
@@ -31,7 +37,7 @@ const SYSTEM_INSTRUCTION = `You are an elite streaming platform recommendation e
 3. If the user provides a specific vibe, prioritize it while utilizing their Taste Profile.
 4. If no specific vibe is provided, recommend hidden gems or highly acclaimed titles aligning with their profile, strictly avoiding themes or pacing of their abandoned titles.`;
 
-export const generateMovieSuggestions = async (userProfile = {}, userPrompt = '') => {
+export const generateMediaSuggestions = async (userProfile = {}, userPrompt = '') => {
     const { bookmarks = [], completed = [], abandoned = [] } = userProfile;
 
     const userContextParts = [
@@ -49,36 +55,48 @@ export const generateMovieSuggestions = async (userProfile = {}, userPrompt = ''
 
     const promptContext = userContextParts.filter(Boolean).join('\n');
     const MAX_RETRIES = 3;
-    let attempt = 0;
-    let delay = 1000;
+    let lastError;
 
-    while (attempt < MAX_RETRIES) {
-        try {
-            const response = await ai.models.generateContent({
-                model: 'gemini-2.5-flash',
-                contents: promptContext,
-                config: {
-                    systemInstruction: SYSTEM_INSTRUCTION,
-                    responseMimeType: 'application/json',
-                    responseSchema: RESPONSE_SCHEMA,
-                },
-            });
+    for (const currentModel of MODEL_PRIORITY_LIST) {
+        let attempt = 0;
+        let delay = 1000;
 
-            return JSON.parse(response.text);
-        } catch (error) {
-            if (error.status === 503 || error.status === 429) {
-                attempt++;
+        while (attempt < MAX_RETRIES) {
+            try {
+                const response = await ai.models.generateContent({
+                    model: currentModel,
+                    contents: promptContext,
+                    config: {
+                        systemInstruction: SYSTEM_INSTRUCTION,
+                        responseMimeType: 'application/json',
+                        responseSchema: RESPONSE_SCHEMA,
+                    },
+                });
 
-                if (attempt >= MAX_RETRIES) {
-                    console.error('[AI Service] Max retries reached. Failing gracefully.');
-                    throw error;
+                return JSON.parse(response.text);
+            } catch (error) {
+                lastError = error;
+
+                if (error.status === 404 || error.status === 429) {
+                    console.warn(`${error.status} encountered on ${currentModel}. Switching tiers...`);
+                    break;
                 }
 
-                await new Promise((resolve) => setTimeout(resolve, delay));
-                delay *= 2;
-            } else {
-                throw error;
+                if (error.status === 503) {
+                    attempt++;
+                    if (attempt >= MAX_RETRIES) {
+                        console.warn(`Max retries reached for ${currentModel}.`);
+                        break;
+                    }
+
+                    await new Promise((resolve) => setTimeout(resolve, delay));
+                    delay *= 2;
+                } else {
+                    throw error;
+                }
             }
         }
     }
+
+    throw lastError;
 };
